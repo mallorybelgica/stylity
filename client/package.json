@@ -9,12 +9,22 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@expo/webpack-config": "^0.17.0",
+    "@react-native-async-storage/async-storage": "^1.17.10",
+    "@reduxjs/toolkit": "^1.8.5",
+    "@types/react-redux": "^7.1.24",
+    "axios": "^0.27.2",
     "expo": "~46.0.9",
     "expo-status-bar": "~1.4.0",
+    "query-string": "^7.1.1",
     "react": "18.0.0",
     "react-dom": "18.0.0",
+    "react-jwt": "^1.1.6",
     "react-native": "0.69.5",
-    "react-native-web": "~0.18.7"
+    "react-native-dotenv": "^3.3.1",
+    "react-native-gesture-handler": "^2.6.0",
+    "react-native-web": "~0.18.7",
+    "react-redux": "^8.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
