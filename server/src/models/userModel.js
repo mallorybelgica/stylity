@@ -3,13 +3,17 @@ const mongoose = require("mongoose");
 
 const userSchema = mongoose.Schema(
   {
-    first_name: {
+    full_name: {
       type: String,
       required: true,
     },
-    last_name: {
+    display_name: {
       type: String,
       required: true,
+    },
+    bio: {
+      type: String,
+      required: false,
     },
     profile_pic: {
       type: String,
@@ -22,6 +26,18 @@ const userSchema = mongoose.Schema(
     email: {
       type: String,
       required: true,
+    },
+    canvases: {
+      type: Array,
+      required: false,
+    },
+    following: {
+      type: Array,
+      required: false,
+    },
+    followers: {
+      type: Array,
+      required: false,
     },
     role: {
       type: String,
@@ -56,6 +72,16 @@ userSchema.pre("save", function (next) {
     return next();
   }
 });
+
+canvasSchema.statics.list = async function (query) {
+  try {
+    const users = await this.find(query).exec();
+
+    return users;
+  } catch (err) {
+    throw error({ err });
+  }
+};
 
 userSchema.statics.activateWithToken = async function (token) {
   try {
