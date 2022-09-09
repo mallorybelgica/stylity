@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { CanvasElement } from "../../..";
+import { CanvasElement } from "../../types";
 import { RootState } from "../store";
 
 interface CanvasState {

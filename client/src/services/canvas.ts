@@ -1,8 +1,8 @@
-import axios from "axios";
+import axios from "../config/axios";
 import queryString from "query-string";
 import { getToken, isAuthenticated } from "./auth";
 
-const CANVAS_URL = `${process.env.REACT_APP_SERVER_URL}/v1/canvases`;
+const CANVAS_URL = "/v1/canvases";
 
 export const getCanvases = async (filters: object) => {
   try {

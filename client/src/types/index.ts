@@ -14,7 +14,7 @@ export type CanvasElement = {
   canvas_id?: string;
   createdAt: string | Date;
   attributes: Attributes;
-  src?: string;
+  image_id?: string;
   text?: string;
   type: string;
 };
@@ -29,4 +29,15 @@ export type User = {
   canvases?: Array<string>;
   following?: Array<string>;
   followers?: Array<string>;
+};
+
+export type RootStackParamsList = {
+  Profile: undefined;
+  Home: undefined;
+  Canvas: { creator: object; canvas: object };
+  Comments: { userId: string; pid: string };
+  Settings: undefined;
+  Login: undefined;
+  Signup: undefined;
+  NavigationBottom: undefined;
 };

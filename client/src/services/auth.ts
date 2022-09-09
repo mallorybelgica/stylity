@@ -1,8 +1,8 @@
-import axios from "axios";
+import axios from "../config/axios";
 import { isExpired } from "react-jwt";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const AUTH_URL = `${process.env.REACT_APP_SERVER_URL}/v1/auth`;
+const AUTH_URL = "v1/auth";
 
 let AUTH: string, USER: object;
 
@@ -14,9 +14,7 @@ export const register = async (data: object) => {
   try {
     const res = await axios.post(`${AUTH_URL}/register`, data);
 
-    if (res.status === 201) {
-      return res.data;
-    }
+    return res.data;
   } catch (err) {
     return err;
   }
@@ -32,6 +30,8 @@ export const login = async (data: object) => {
     AsyncStorage.setItem("@stylity_token", AUTH);
     AsyncStorage.setItem("@stylity_user", JSON.stringify(USER));
 
+    console.log({ AUTH, USER });
+
     return USER;
   } catch (err) {
     return err;
@@ -43,7 +43,7 @@ export const userExists = async (email: string) => {
 };
 
 export const isAuthenticated = async () => {
-  const token = localStorage.getItem("@stylity_token");
+  const token = await AsyncStorage.getItem("@stylity_token");
   if (token) {
     const isTokenExpired = isExpired(token);
 

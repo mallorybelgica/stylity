@@ -35,13 +35,6 @@ export const userSlice = createSlice({
         isLoading: false,
       };
     },
-    update_current_user: (state, action) => {
-      return {
-        ...state,
-        currentUser: action.payload,
-        isLoading: false,
-      };
-    },
     user_error: (state, action) => {
       return {
         ...state,

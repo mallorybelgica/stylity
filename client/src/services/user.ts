@@ -1,8 +1,8 @@
-import axios from "axios";
+import axios from "../config/axios";
 import queryString from "query-string";
 import { getToken, isAuthenticated } from "./auth";
 
-const USER_URL = `${process.env.REACT_APP_SERVER_URL}/v1/users`;
+const USER_URL = "/v1/users";
 
 export const getUsers = async (filters: object) => {
   try {

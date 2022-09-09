@@ -1,8 +1,8 @@
-import axios from "axios";
+import axios from "../config/axios";
 import queryString from "query-string";
 import { getToken, isAuthenticated } from "./auth";
 
-const COMMENTS_URL = `${process.env.REACT_APP_SERVER_URL}/v1/comments`;
+const COMMENTS_URL = "/v1/comments";
 
 export const getComments = async (filters: object) => {
   try {
