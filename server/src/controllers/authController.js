@@ -2,7 +2,7 @@ const User = require("../models/userModel");
 const { ROLES } = require("../utils/global");
 
 exports.register = async (req, res, next) => {
-  const { email, password, first_name, last_name, profile_pic } = req.body;
+  const { email, password, full_name, display_name } = req.body;
 
   try {
     await User.checkDuplicateEmail(email);
@@ -10,21 +10,20 @@ exports.register = async (req, res, next) => {
     const user = await new User({
       email,
       password,
-      first_name,
-      last_name,
-      profile_pic,
-      role: ROLES.DISABLED,
+      full_name,
+      display_name,
+      role: ROLES.USER,
       createdAt: new Date(),
     }).save();
 
-    const activationToken = await user.getActivationToken(role);
+    const activationToken = await user.getActivationToken(ROLES.USER);
 
     return res.json({
       activationToken,
       activationLink: `https://${req.get(
         "host"
       )}/v1/auth/activate?token=${activationToken}`,
-      user: user,
+      user,
     });
   } catch (err) {
     return next(err);

@@ -1,5 +1,11 @@
 require("dotenv").config();
 const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
+const httpStatus = require("http-status");
+const jwt = require("jsonwebtoken");
+const { error } = require("console");
+
+const { JWT_KEY } = process.env;
 
 const userSchema = mongoose.Schema(
   {
@@ -73,7 +79,7 @@ userSchema.pre("save", function (next) {
   }
 });
 
-canvasSchema.statics.list = async function (query) {
+userSchema.statics.list = async function (query) {
   try {
     const users = await this.find(query).exec();
 
