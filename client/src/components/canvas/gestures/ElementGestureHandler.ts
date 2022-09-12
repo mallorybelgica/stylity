@@ -1,13 +1,15 @@
 import { useRef, useState } from "react";
 import { Animated, View, Image } from "react-native";
 import { State } from "react-native-gesture-handler";
+import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { update_element_attributes } from "../../../store/canvas/canvasSlice";
+import { canvas } from "../../../store/selectors";
 import { CanvasElement } from "../../../types";
 
 export const ElementGestureHandler = () => {
   const dispatch = useDispatch();
-  const [currentElement, setCurrentElement] = useState<CanvasElement>();
+  const { currentElement } = useSelector(canvas);
 
   const viewRef = useRef<View>();
   const imageRef = useRef<Image>();
@@ -160,6 +162,5 @@ export const ElementGestureHandler = () => {
     pinchGestureHandler,
     rotateGestureEvent,
     rotateGestureHandler,
-    setCurrentElement,
   ];
 };

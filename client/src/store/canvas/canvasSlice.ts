@@ -4,6 +4,7 @@ import { RootState } from "../store";
 
 interface CanvasState {
   caption: string;
+  currentElement: CanvasElement;
   elements: Array<CanvasElement>;
   likes: Array<string>;
   screenshot: string;
@@ -15,6 +16,13 @@ interface CanvasState {
 
 const initialState: CanvasState = {
   caption: "",
+  currentElement: {
+    _id: "",
+    canvas_id: "",
+    createdAt: "",
+    attributes: { position: { left: 50, top: 50 }, rotate: 0 },
+    type: "",
+  },
   elements: [],
   likes: [],
   screenshot: "",
@@ -42,6 +50,9 @@ export const canvasSlice = createSlice({
           isLoading: false,
         };
       }
+    },
+    get_current_element: (state, action) => {
+      state.currentElement = action.payload;
     },
     add_element: (state, action) => {
       state.elements.push(action.payload);
@@ -131,6 +142,7 @@ export const canvasSlice = createSlice({
 
 export const {
   get_elements,
+  get_current_element,
   add_element,
   update_element,
   delete_element,

@@ -9,6 +9,8 @@ import { REACT_APP_AWS_URL } from "@env";
 
 import { CanvasElement } from "../../types";
 import { ElementGestureHandler } from "./gestures/ElementGestureHandler";
+import { useDispatch } from "react-redux";
+import { get_current_element } from "../../store/canvas/canvasSlice";
 
 interface Props {
   element: CanvasElement;
@@ -16,6 +18,7 @@ interface Props {
 }
 
 const ImageElement: FC<Props> = ({ element, index }) => {
+  const dispatch = useDispatch();
   const IMAGE_URL: string = `${REACT_APP_AWS_URL}/${element.image_id}.jpeg`;
 
   const [
@@ -46,7 +49,7 @@ const ImageElement: FC<Props> = ({ element, index }) => {
     >
       <Animated.View
         ref={viewRef}
-        onTouchStart={() => setCurrentElement(element)}
+        onTouchStart={() => dispatch(get_current_element)}
         style={[
           imageStyles.container,
           {

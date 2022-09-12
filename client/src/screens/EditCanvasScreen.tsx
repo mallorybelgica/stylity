@@ -9,6 +9,9 @@ import { canvas } from "../store/selectors";
 import { add_element } from "../store/canvas/canvasSlice";
 import { imageUploader } from "../helpers/utils";
 import ImageElement from "../components/canvas/ImageElement";
+import TextElement from "../components/canvas/TextElement";
+import BottomSheet from "../components/common/BottomSheet";
+import EditPanel from "../components/canvas/editPanel/EditPanel";
 
 const EditCanvasScreen = () => {
   const dispatch = useDispatch();
@@ -85,10 +88,13 @@ const EditCanvasScreen = () => {
                 <ImageElement element={element} index={index} key={index} />
               );
             } else if (element.type === "text") {
-              return <Text>Text</Text>;
+              return (
+                <TextElement element={element} index={index} key={index} />
+              );
             }
           })}
       </View>
+      <EditPanel />
     </SafeAreaView>
   );
 };
