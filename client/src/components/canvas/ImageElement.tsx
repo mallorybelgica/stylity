@@ -1,14 +1,14 @@
-import { REACT_APP_AWS_URL } from "@env";
-import React, { FC } from "react";
+import React, { FC, useEffect } from "react";
 import { Animated, StyleSheet } from "react-native";
 import {
   PanGestureHandler,
   PinchGestureHandler,
   RotationGestureHandler,
 } from "react-native-gesture-handler";
+import { REACT_APP_AWS_URL } from "@env";
+
 import { CanvasElement } from "../../types";
-import { ElementDragger } from "./gestures/ElementDragger";
-import { ElementResizerAndRotator } from "./gestures/ElementResizerAndRotator";
+import { ElementGestureHandler } from "./gestures/ElementGestureHandler";
 
 interface Props {
   element: CanvasElement;
@@ -16,20 +16,28 @@ interface Props {
 }
 
 const ImageElement: FC<Props> = ({ element, index }) => {
-  const [imageViewRef, transX, transY, panGestureEvent, panGestureHandler] =
-    ElementDragger();
+  const IMAGE_URL: string = `${REACT_APP_AWS_URL}/${element.image_id}.jpeg`;
 
   const [
+    viewRef,
     imageRef,
     scale,
+    rotate,
+    rotateStr,
+    translateX,
+    translateY,
+    panGestureEvent,
+    panGestureHandler,
     pinchGestureEvent,
     pinchGestureHandler,
-    rotateStr,
     rotateGestureEvent,
     rotateGestureHandler,
-  ] = ElementResizerAndRotator();
+    setCurrentElement,
+  ] = ElementGestureHandler();
 
-  const IMAGE_URL: string = `${REACT_APP_AWS_URL}/${element.image_id}.jpeg`;
+  useEffect(() => {
+    setCurrentElement(element);
+  }, [element]);
 
   return (
     <PanGestureHandler
@@ -37,13 +45,13 @@ const ImageElement: FC<Props> = ({ element, index }) => {
       onHandlerStateChange={panGestureHandler}
     >
       <Animated.View
-        ref={imageViewRef}
+        ref={viewRef}
         style={[
           imageStyles.container,
           {
-            left: element.attributes.x,
-            top: element.attributes.y,
-            transform: [{ translateX: transX }, { translateY: transY }],
+            left: element.attributes.position.left,
+            top: element.attributes.position.top,
+            transform: [{ translateX: translateX }, { translateY: translateY }],
             zIndex: index,
           },
         ]}
@@ -62,8 +70,8 @@ const ImageElement: FC<Props> = ({ element, index }) => {
                 source={{ uri: IMAGE_URL }}
                 style={[
                   {
-                    width: element.attributes.width,
-                    height: element.attributes.height,
+                    width: element.attributes.dimensions?.width,
+                    height: element.attributes.dimensions?.height,
                     transform: [
                       { perspective: 200 },
                       { rotate: rotateStr },

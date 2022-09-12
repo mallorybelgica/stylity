@@ -5,7 +5,7 @@ import uuid from "react-native-uuid";
 
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
-import { canvas, user } from "../store/selectors";
+import { canvas } from "../store/selectors";
 import { add_element } from "../store/canvas/canvasSlice";
 import { imageUploader } from "../helpers/utils";
 import ImageElement from "../components/canvas/ImageElement";
@@ -17,15 +17,15 @@ const EditCanvasScreen = () => {
   const addImageElement = async () => {
     const element_id = await uuid.v4().toString();
     const res: any = await imageUploader(element_id, "canvas_element");
+    console.log({ res });
     if (res) {
       dispatch(
         add_element({
           _id: element_id,
           attributes: {
-            width: 250,
-            height: 250,
-            x: 50,
-            y: 50,
+            dimensions: { width: 250, height: 250 },
+            position: { left: 50, top: 50 },
+            rotate: 0,
           },
           image_id: res.data.asset._id.toString(),
           createdAt: new Date().toString(),
@@ -35,7 +35,7 @@ const EditCanvasScreen = () => {
     }
   };
 
-  const AddTextElement = () => {
+  const addTextElement = () => {
     dispatch(
       add_element({
         _id: uuid.v4().toString(),
@@ -44,8 +44,8 @@ const EditCanvasScreen = () => {
           font_size: 28,
           isBold: false,
           color: "#000000",
-          x: 50,
-          y: 50,
+          position: { left: 50, top: 50 },
+          rotate: 0,
         },
         text: "Enter Text Here...",
         createdAt: new Date().toString(),
@@ -67,7 +67,7 @@ const EditCanvasScreen = () => {
           name="format-text"
           color="black"
           size={26}
-          onPress={AddTextElement}
+          onPress={addTextElement}
         />
         {/* <MaterialCommunityIcons
             name="content-save"
@@ -78,13 +78,13 @@ const EditCanvasScreen = () => {
       </View>
       <View style={canvasStyles.canvas}>
         {elements.length > 0 &&
-          elements.map((element, index) => {
-            console.log({ element });
+          elements?.map((element, index) => {
+            console.log({ elements });
             if (element.type === "image") {
               return (
                 <ImageElement element={element} index={index} key={index} />
               );
-            } else {
+            } else if (element.type === "text") {
               return <Text>Text</Text>;
             }
           })}

@@ -1,8 +1,7 @@
 export type Attributes = {
-  width?: number;
-  height?: number;
-  x: number;
-  y: number;
+  dimensions?: { width: number; height: number };
+  position: { left: number; top: number };
+  rotate: number;
   font_family?: string;
   font_size?: number;
   isBold?: boolean;

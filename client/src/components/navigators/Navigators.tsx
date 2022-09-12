@@ -10,7 +10,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
-import { RootStackParamsList } from "../../..";
+import { RootStackParamsList } from "../../types";
 import { colors } from "../../styles/base";
 
 import EditCanvasScreen from "../../screens/EditCanvasScreen";

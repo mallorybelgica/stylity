@@ -44,96 +44,77 @@ export const canvasSlice = createSlice({
       }
     },
     add_element: (state, action) => {
-      let newArray = [...Object.values(state.elements)];
-      newArray.push(action.payload);
-      return {
-        ...state,
-        elements: newArray,
-      };
+      state.elements.push(action.payload);
     },
     delete_element: (state, action) => {
-      const index = Object.values(state.elements).findIndex(
-        (elements) => elements._id === action.payload
-      );
-      let newArray = [...Object.values(state.elements)];
-      newArray.splice(index, 1);
-      return {
-        ...state,
-        elements: newArray,
+      const index = state.elements
+        .map((element) => element._id)
+        .indexOf(action.payload._id);
+
+      state.elements.splice(index, 1);
+    },
+    update_element: (state, action) => {
+      const index = state.elements
+        .map((element) => element._id)
+        .indexOf(action.payload._id);
+
+      state.elements[index] = {
+        ...state.elements[index],
+        text: action.payload.text,
       };
     },
-    change_element_attributes: (state, action) => {
-      const index = Object.values(state.elements).findIndex(
-        (elements) => elements._id === action.payload._id
-      );
+    update_element_attributes: (state, action) => {
+      const index = state.elements
+        .map((element) => element._id)
+        .indexOf(action.payload._id);
 
-      let newArray = [...Object.values(state.elements)];
-      newArray[index].attributes = action.payload.attributes;
-
-      return {
-        ...state,
-        elements: newArray,
+      state.elements[index].attributes = {
+        ...state.elements[index].attributes,
+        ...action.payload.attributes,
       };
     },
     send_element_backward: (state, action) => {
-      const index = Object.values(state.elements).findIndex(
-        (elements) => elements._id === action.payload._id
-      );
+      const index = state.elements
+        .map((element) => element._id)
+        .indexOf(action.payload._id);
 
       if (index > 0 && state.elements.length > 1) {
-        let newArray = [...Object.values(state.elements)];
-        const element = newArray.splice(index, 1)[0];
-        newArray.splice(index - 1, 0, element);
-        return {
-          ...state,
-          elements: newArray,
-        };
+        const element = state.elements.splice(index, 1)[0];
+        state.elements.splice(index - 1, 0, element);
       } else {
         return state;
       }
     },
     send_element_forward: (state, action) => {
-      const index = Object.values(state.elements).findIndex(
-        (elements) => elements._id === action.payload._id
-      );
+      const index = state.elements
+        .map((element) => element._id)
+        .indexOf(action.payload._id);
+
       if (index < state.elements.length && state.elements.length > 1) {
-        let newArray = [...Object.values(state.elements)];
-        const element = newArray.splice(index, 1)[0];
-        newArray.splice(index + 1, 0, element);
-        return {
-          ...state,
-          elements: newArray,
-        };
+        const element = state.elements.splice(index, 1)[0];
+        state.elements.splice(index + 1, 0, element);
       } else {
         return state;
       }
     },
     send_element_back: (state, action) => {
-      const index = Object.values(state.elements).findIndex(
-        (elements) => elements._id === action.payload._id
-      );
+      const index = state.elements
+        .map((element) => element._id)
+        .indexOf(action.payload._id);
+
       if (index > 0 && state.elements.length > 1) {
-        let newArray = [...Object.values(state.elements)];
-        newArray.unshift(...newArray.splice(index, 1));
-        return {
-          ...state,
-          elements: newArray,
-        };
+        state.elements.unshift(...state.elements.splice(index, 1));
       } else {
         return state;
       }
     },
     send_element_front: (state, action) => {
-      const index = Object.values(state.elements).findIndex(
-        (elements) => elements._id === action.payload._id
-      );
+      const index = state.elements
+        .map((element) => element._id)
+        .indexOf(action.payload._id);
+
       if (index < state.elements.length && state.elements.length > 1) {
-        let newArray = [...Object.values(state.elements)];
-        newArray.push(...newArray.splice(index, 1));
-        return {
-          ...state,
-          elements: newArray,
-        };
+        state.elements.push(...state.elements.splice(index, 1));
       } else {
         return state;
       }
@@ -151,8 +132,9 @@ export const canvasSlice = createSlice({
 export const {
   get_elements,
   add_element,
+  update_element,
   delete_element,
-  change_element_attributes,
+  update_element_attributes,
   send_element_backward,
   send_element_forward,
   send_element_back,
