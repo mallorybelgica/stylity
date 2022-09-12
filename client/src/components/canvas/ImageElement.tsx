@@ -46,6 +46,7 @@ const ImageElement: FC<Props> = ({ element, index }) => {
     >
       <Animated.View
         ref={viewRef}
+        onTouchStart={() => setCurrentElement(element)}
         style={[
           imageStyles.container,
           {
