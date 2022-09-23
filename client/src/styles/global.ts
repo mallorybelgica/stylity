@@ -18,4 +18,9 @@ export const globalStyles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
+  detailedButton: {
+    padding: 10,
+    justifyContent: "center",
+    alignItems: "center",
+  },
 });

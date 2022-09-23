@@ -1,4 +1,10 @@
-import React, { FC, useState, useEffect } from "react";
+import React, {
+  FC,
+  useState,
+  useEffect,
+  SetStateAction,
+  Dispatch,
+} from "react";
 import { Animated, StyleSheet, TextInput, Text } from "react-native";
 import {
   PanGestureHandler,
@@ -6,28 +12,38 @@ import {
   RotationGestureHandler,
 } from "react-native-gesture-handler";
 import { useDispatch } from "react-redux";
-import {
-  get_current_element,
-  update_element,
-} from "../../store/canvas/canvasSlice";
-import { CanvasElement } from "../../types";
+import { update_element } from "../../store/canvas/canvasSlice";
+import { colors } from "../../styles/base";
+import { AttributesType, CanvasElementType } from "../../types";
 import { ElementGestureHandler } from "./gestures/ElementGestureHandler";
 
 interface Props {
-  element: CanvasElement;
+  element: CanvasElementType;
   index: number;
+  currentElement: CanvasElementType | undefined;
+  setCurrentElement: Dispatch<SetStateAction<CanvasElementType | undefined>>;
 }
 
-const TextElement: FC<Props> = ({ element, index }) => {
+const TextElement: FC<Props> = ({
+  element,
+  currentElement,
+  setCurrentElement,
+  index,
+}) => {
   const dispatch = useDispatch();
+  const [originalAttributes, setOriginalAttributes] = useState<
+    AttributesType | undefined
+  >();
   const [textValue, setTextValue] = useState("");
   const [editText, setEditText] = useState(false);
 
   const [
+    panRef,
+    rotationRef,
+    pinchRef,
     viewRef,
     imageRef,
     scale,
-    rotate,
     rotateStr,
     translateX,
     translateY,
@@ -37,7 +53,7 @@ const TextElement: FC<Props> = ({ element, index }) => {
     pinchGestureHandler,
     rotateGestureEvent,
     rotateGestureHandler,
-    setCurrentElement,
+    setGesturedElement,
   ] = ElementGestureHandler();
 
   const handleTextInput = (value: string) => {
@@ -51,14 +67,22 @@ const TextElement: FC<Props> = ({ element, index }) => {
     }
   }, [element.text]);
 
+  useEffect(() => {
+    setOriginalAttributes(element.attributes);
+  }, []);
+
   return (
     <PanGestureHandler
+      ref={panRef}
       onGestureEvent={panGestureEvent}
       onHandlerStateChange={panGestureHandler}
     >
       <Animated.View
         ref={viewRef}
-        onTouchStart={() => dispatch(get_current_element(element))}
+        onTouchStart={() => {
+          setCurrentElement(element);
+          setGesturedElement(element);
+        }}
         style={[
           textStyles.container,
           {
@@ -70,16 +94,20 @@ const TextElement: FC<Props> = ({ element, index }) => {
         ]}
       >
         <RotationGestureHandler
+          ref={rotationRef}
           onGestureEvent={rotateGestureEvent}
           onHandlerStateChange={rotateGestureHandler}
         >
-          <Animated.View>
+          <Animated.View style={textStyles.wrapper} collapsable={false}>
             <PinchGestureHandler
+              ref={pinchRef}
               onGestureEvent={pinchGestureEvent}
               onHandlerStateChange={pinchGestureHandler}
             >
               <Animated.View
                 style={{
+                  borderWidth: currentElement?._id === element._id ? 2.5 : 0,
+                  borderColor: colors.accent,
                   transform: [
                     { perspective: 200 },
                     { rotate: rotateStr },
@@ -93,6 +121,15 @@ const TextElement: FC<Props> = ({ element, index }) => {
                       fontSize: element.attributes.font_size,
                       fontFamily: element.attributes.font_family,
                       fontWeight: element.attributes.isBold ? "bold" : "normal",
+                      fontStyle: element.attributes.isItalic
+                        ? "italic"
+                        : "normal",
+                      textDecorationLine: element.attributes.isUnderlined
+                        ? "underline"
+                        : "none",
+                      textTransform: element.attributes.isUppercase
+                        ? "uppercase"
+                        : "none",
                       color: element.attributes.color,
                     }}
                     value={textValue}
@@ -106,6 +143,15 @@ const TextElement: FC<Props> = ({ element, index }) => {
                       fontSize: element.attributes.font_size,
                       fontFamily: element.attributes.font_family,
                       fontWeight: element.attributes.isBold ? "bold" : "normal",
+                      fontStyle: element.attributes.isItalic
+                        ? "italic"
+                        : "normal",
+                      textDecorationLine: element.attributes.isUnderlined
+                        ? "underline"
+                        : "none",
+                      textTransform: element.attributes.isUppercase
+                        ? "uppercase"
+                        : "none",
                       color: element.attributes.color,
                     }}
                     onPress={() => setEditText(true)}
@@ -128,5 +174,8 @@ const textStyles = StyleSheet.create({
   container: {
     position: "absolute",
     alignItems: "center",
+  },
+  wrapper: {
+    flex: 1,
   },
 });

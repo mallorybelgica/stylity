@@ -23,7 +23,7 @@ const userSchema = mongoose.Schema(
     },
     profile_pic: {
       type: String,
-      required: false,
+      default: "",
     },
     password: {
       type: String,
@@ -39,11 +39,11 @@ const userSchema = mongoose.Schema(
     },
     following: {
       type: Array,
-      required: false,
+      default: [],
     },
     followers: {
       type: Array,
-      required: false,
+      default: [],
     },
     role: {
       type: String,
@@ -151,11 +151,13 @@ userSchema.method({
 
     const fields = [
       "_id",
-      "first_name",
-      "last_name",
+      "full_name",
+      "display_name",
+      "profile_pic",
       "email",
-      "telephone",
-      "authToken",
+      "bio",
+      "following",
+      "followers",
       "role",
       "createdAt",
     ];

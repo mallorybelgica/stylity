@@ -34,7 +34,7 @@ exports.get = async (req, res, next) => {
 exports.create = async (req, res, next) => {
   try {
     const comment = await new Comment(req.body).save();
-
+    console.log({ res, comment });
     res.json({ status: httpStatus.CREATED, comment });
   } catch (err) {
     next(err);

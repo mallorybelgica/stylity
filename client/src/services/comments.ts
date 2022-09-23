@@ -17,6 +17,8 @@ export const getComments = async (filters: object) => {
         },
       });
 
+      console.log({ res });
+
       return res.data;
     }
   } catch (err) {
@@ -48,12 +50,21 @@ export const createComment = async (data: object) => {
     const authenticated = await isAuthenticated();
     const token = await getToken();
 
+    const commentData = {
+      ...data,
+      createdAt: new Date(),
+    };
+
+    console.log({ commentData });
+
     if (authenticated) {
-      const res = await axios.post(`${COMMENTS_URL}`, data, {
+      const res = await axios.post(`${COMMENTS_URL}`, commentData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
+
+      console.log({ res });
 
       return res.data;
     }

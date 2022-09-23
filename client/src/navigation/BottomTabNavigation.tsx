@@ -1,36 +1,33 @@
 import React from "react";
-import { Image, TouchableOpacity, View, StyleSheet } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { StyleSheet } from "react-native";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import { colors } from "../styles/base";
+import { navigationRef } from "../navigation/RouteNavigation";
 
 import {
-  createNativeStackNavigator,
-  NativeStackNavigationProp,
-} from "@react-navigation/native-stack";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+  CanvasStackNavigator,
+  MainStackNavigator,
+  ProfileStackNavigator,
+} from "./StackNavigator";
 
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-
-import { RootStackParamsList } from "../../types";
-import { colors } from "../../styles/base";
-
-import EditCanvasScreen from "../../screens/EditCanvasScreen";
-import ProfileScreen from "../../screens/ProfileScreen";
-import HomeFeedScreen from "../../screens/HomeFeedScreen";
-import UserSettingsScreen from "../../screens/UserSettingsScreen";
-
-const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
-const BottomNavigator = () => {
+const BottomTabNavigator = () => {
+  const route = navigationRef.current?.getCurrentRoute(); //current route object
+  const currentScreen = route?.name; // current screen name
+
   return (
     <Tab.Navigator
+      sceneContainerStyle={{ backgroundColor: "#fff" }}
       screenOptions={{
         tabBarStyle: navigatorStyles.bottomContainer,
         headerShown: false,
+        unmountOnBlur: true,
       }}
+      initialRouteName="Home"
     >
       <Tab.Screen
-        name="Home"
         options={{
           headerShown: false,
           tabBarShowLabel: false,
@@ -45,10 +42,10 @@ const BottomNavigator = () => {
             />
           ),
         }}
-        component={HomeFeedScreen}
+        name="Home"
+        component={MainStackNavigator}
       />
       <Tab.Screen
-        name="EditCanvas"
         options={{
           headerShown: false,
           tabBarShowLabel: false,
@@ -63,10 +60,10 @@ const BottomNavigator = () => {
             />
           ),
         }}
-        component={EditCanvasScreen}
+        name="EditCanvas"
+        component={CanvasStackNavigator}
       />
       <Tab.Screen
-        name="Profile"
         options={{
           headerShown: false,
           tabBarShowLabel: false,
@@ -81,63 +78,14 @@ const BottomNavigator = () => {
             />
           ),
         }}
-        component={ProfileScreen}
-      />
-      <Tab.Screen
-        options={{
-          headerShown: false,
-          tabBarShowLabel: false,
-          tabBarActiveTintColor: "#000",
-          tabBarInactiveTintColor: "#000",
-          tabBarButton: () => null,
-        }}
-        name="Settings"
-        component={UserSettingsScreen}
+        name="Profile"
+        component={ProfileStackNavigator}
       />
     </Tab.Navigator>
   );
 };
 
-const Navigators = () => {
-  const navigation =
-    useNavigation<NativeStackNavigationProp<RootStackParamsList>>();
-
-  return (
-    <Stack.Navigator>
-      <Stack.Screen
-        name="BottomNavigator"
-        options={{
-          header: () => {
-            return (
-              <View style={navigatorStyles.header}>
-                <Image
-                  style={navigatorStyles.logo}
-                  source={require("../../../assets/logo3.png")}
-                />
-                <TouchableOpacity
-                  onPress={() => navigation.navigate("Settings")}
-                  style={navigatorStyles.icon}
-                >
-                  <MaterialCommunityIcons
-                    name={
-                      //   currentRoute === "Settings" ? "cog" : "cog-outline"
-                      "cog-outline"
-                    }
-                    color={colors.whiteText}
-                    size={26}
-                  />
-                </TouchableOpacity>
-              </View>
-            );
-          },
-        }}
-        component={BottomNavigator}
-      />
-    </Stack.Navigator>
-  );
-};
-
-export default Navigators;
+export default BottomTabNavigator;
 
 const navigatorStyles = StyleSheet.create({
   header: {

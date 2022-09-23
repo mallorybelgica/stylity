@@ -3,6 +3,7 @@ const Canvas = require("../models/canvasModel");
 
 exports.list = async (req, res, next) => {
   try {
+    console.log({ query: req.query });
     const appointmentsList = await Canvas.list(req.query);
 
     res.json({ status: httpStatus.OK, data: appointmentsList });

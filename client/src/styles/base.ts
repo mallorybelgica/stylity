@@ -5,4 +5,5 @@ export const colors = {
   primaryText: "#817f7e",
   lightText: "#b3b3b3",
   whiteText: "#f5f5ff",
+  logo: "#8dd9d1",
 };

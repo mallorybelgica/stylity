@@ -1,11 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { CanvasElement } from "../../types";
+import { CanvasElementType } from "../../types";
 import { RootState } from "../store";
 
 interface CanvasState {
   caption: string;
-  currentElement: CanvasElement;
-  elements: Array<CanvasElement>;
+  currentElement: CanvasElementType;
+  elements: Array<CanvasElementType>;
+  background_color: string;
   likes: Array<string>;
   screenshot: string;
   user_id: string;
@@ -23,6 +24,7 @@ const initialState: CanvasState = {
     attributes: { position: { left: 50, top: 50 }, rotate: 0 },
     type: "",
   },
+  background_color: "#fff",
   elements: [],
   likes: [],
   screenshot: "",
@@ -51,9 +53,6 @@ export const canvasSlice = createSlice({
         };
       }
     },
-    get_current_element: (state, action) => {
-      state.currentElement = action.payload;
-    },
     add_element: (state, action) => {
       state.elements.push(action.payload);
     },
@@ -71,7 +70,7 @@ export const canvasSlice = createSlice({
 
       state.elements[index] = {
         ...state.elements[index],
-        text: action.payload.text,
+        ...action.payload,
       };
     },
     update_element_attributes: (state, action) => {
@@ -87,7 +86,7 @@ export const canvasSlice = createSlice({
     send_element_backward: (state, action) => {
       const index = state.elements
         .map((element) => element._id)
-        .indexOf(action.payload._id);
+        .indexOf(action.payload);
 
       if (index > 0 && state.elements.length > 1) {
         const element = state.elements.splice(index, 1)[0];
@@ -99,7 +98,7 @@ export const canvasSlice = createSlice({
     send_element_forward: (state, action) => {
       const index = state.elements
         .map((element) => element._id)
-        .indexOf(action.payload._id);
+        .indexOf(action.payload);
 
       if (index < state.elements.length && state.elements.length > 1) {
         const element = state.elements.splice(index, 1)[0];
@@ -111,7 +110,7 @@ export const canvasSlice = createSlice({
     send_element_back: (state, action) => {
       const index = state.elements
         .map((element) => element._id)
-        .indexOf(action.payload._id);
+        .indexOf(action.payload);
 
       if (index > 0 && state.elements.length > 1) {
         state.elements.unshift(...state.elements.splice(index, 1));
@@ -122,13 +121,19 @@ export const canvasSlice = createSlice({
     send_element_front: (state, action) => {
       const index = state.elements
         .map((element) => element._id)
-        .indexOf(action.payload._id);
+        .indexOf(action.payload);
 
       if (index < state.elements.length && state.elements.length > 1) {
         state.elements.push(...state.elements.splice(index, 1));
       } else {
         return state;
       }
+    },
+    update_canvas: (state, action) => {
+      return {
+        ...state,
+        ...action.payload,
+      };
     },
     canvas_error: (state, action) => {
       return {
@@ -142,7 +147,6 @@ export const canvasSlice = createSlice({
 
 export const {
   get_elements,
-  get_current_element,
   add_element,
   update_element,
   delete_element,
@@ -151,6 +155,7 @@ export const {
   send_element_forward,
   send_element_back,
   send_element_front,
+  update_canvas,
   canvas_error,
 } = canvasSlice.actions;
 

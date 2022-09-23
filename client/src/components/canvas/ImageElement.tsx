@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from "react";
+import React, { FC, SetStateAction, Dispatch } from "react";
 import { Animated, StyleSheet } from "react-native";
 import {
   PanGestureHandler,
@@ -7,25 +7,32 @@ import {
 } from "react-native-gesture-handler";
 import { REACT_APP_AWS_URL } from "@env";
 
-import { CanvasElement } from "../../types";
+import { CanvasElementType } from "../../types";
 import { ElementGestureHandler } from "./gestures/ElementGestureHandler";
-import { useDispatch } from "react-redux";
-import { get_current_element } from "../../store/canvas/canvasSlice";
+import { colors } from "../../styles/base";
 
 interface Props {
-  element: CanvasElement;
+  element: CanvasElementType;
   index: number;
+  currentElement: CanvasElementType | undefined;
+  setCurrentElement: Dispatch<SetStateAction<CanvasElementType | undefined>>;
 }
 
-const ImageElement: FC<Props> = ({ element, index }) => {
-  const dispatch = useDispatch();
+const ImageElement: FC<Props> = ({
+  element,
+  currentElement,
+  setCurrentElement,
+  index,
+}) => {
   const IMAGE_URL: string = `${REACT_APP_AWS_URL}/${element.image_id}.jpeg`;
 
   const [
+    panRef,
+    rotationRef,
+    pinchRef,
     viewRef,
     imageRef,
     scale,
-    rotate,
     rotateStr,
     translateX,
     translateY,
@@ -35,21 +42,21 @@ const ImageElement: FC<Props> = ({ element, index }) => {
     pinchGestureHandler,
     rotateGestureEvent,
     rotateGestureHandler,
-    setCurrentElement,
+    setGesturedElement,
   ] = ElementGestureHandler();
-
-  useEffect(() => {
-    setCurrentElement(element);
-  }, [element]);
 
   return (
     <PanGestureHandler
+      ref={panRef}
       onGestureEvent={panGestureEvent}
       onHandlerStateChange={panGestureHandler}
     >
       <Animated.View
         ref={viewRef}
-        onTouchStart={() => dispatch(get_current_element)}
+        onTouchStart={() => {
+          setCurrentElement(element);
+          setGesturedElement(element);
+        }}
         style={[
           imageStyles.container,
           {
@@ -61,11 +68,13 @@ const ImageElement: FC<Props> = ({ element, index }) => {
         ]}
       >
         <RotationGestureHandler
+          ref={rotationRef}
           onGestureEvent={rotateGestureEvent}
           onHandlerStateChange={rotateGestureHandler}
         >
-          <Animated.View>
+          <Animated.View style={imageStyles.wrapper} collapsable={false}>
             <PinchGestureHandler
+              ref={pinchRef}
               onGestureEvent={pinchGestureEvent}
               onHandlerStateChange={pinchGestureHandler}
             >
@@ -74,6 +83,8 @@ const ImageElement: FC<Props> = ({ element, index }) => {
                 source={{ uri: IMAGE_URL }}
                 style={[
                   {
+                    borderWidth: currentElement?._id === element._id ? 2.5 : 0,
+                    borderColor: colors.accent,
                     width: element.attributes.dimensions?.width,
                     height: element.attributes.dimensions?.height,
                     transform: [
@@ -98,5 +109,8 @@ const imageStyles = StyleSheet.create({
   container: {
     position: "absolute",
     alignItems: "center",
+  },
+  wrapper: {
+    flex: 1,
   },
 });

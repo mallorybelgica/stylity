@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Button, View } from "react-native";
 import StyledTextInput from "../components/common/StyledTextInput";
 import { logout } from "../services/auth";

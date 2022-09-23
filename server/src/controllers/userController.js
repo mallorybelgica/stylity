@@ -5,7 +5,11 @@ exports.list = async (req, res, next) => {
   try {
     const usersList = await User.list(req.query);
 
-    res.json({ status: httpStatus.OK, data: usersList });
+    const transformedUsersList = usersList.map((user) => {
+      return user.transform();
+    });
+
+    res.json({ status: httpStatus.OK, data: transformedUsersList });
   } catch (err) {
     next(err);
   }
@@ -17,7 +21,8 @@ exports.get = async (req, res, next) => {
 
     await User.findOne({ _id })
       .then((user) => {
-        res.json({ status: httpStatus.OK, data: user });
+        const transformedUser = user.transform();
+        res.json({ status: httpStatus.OK, data: transformedUser });
       })
       .catch((err) =>
         res.json({

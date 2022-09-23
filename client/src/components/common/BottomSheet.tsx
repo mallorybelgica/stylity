@@ -3,28 +3,36 @@ import React, {
   JSXElementConstructor,
   ReactElement,
   SetStateAction,
-  useState,
 } from "react";
 import {
-  Alert,
   Modal,
   StyleSheet,
   Text,
   Pressable,
   View,
   Dimensions,
+  Platform,
 } from "react-native";
+import { useDispatch } from "react-redux";
+import { toggle_modal } from "../../store/modal/modalSlice";
 
 interface Props {
   showModal: boolean;
   setShowModal: SetStateAction<any>;
+  customHeight?: number;
   children: ReactElement<any, string | JSXElementConstructor<any>>;
 }
 
 const { width, height } = Dimensions.get("window");
 
-const BottomSheet: FC<Props> = ({ children, showModal, setShowModal }) => {
-  const [modalVisible, setModalVisible] = useState(false);
+const BottomSheet: FC<Props> = ({
+  children,
+  showModal,
+  setShowModal,
+  customHeight,
+}) => {
+  const dispatch = useDispatch();
+  const modalHeight = customHeight ? customHeight : 0.65;
   return (
     <View style={styles.centeredView}>
       <Modal
@@ -32,21 +40,40 @@ const BottomSheet: FC<Props> = ({ children, showModal, setShowModal }) => {
         transparent={true}
         visible={showModal}
         onRequestClose={() => {
-          Alert.alert("Modal has been closed.");
-          setModalVisible(!modalVisible);
+          setShowModal(false);
+          dispatch(toggle_modal(false));
         }}
       >
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <Pressable
-              style={[styles.button, styles.buttonClose]}
-              onPress={() => setShowModal(false)}
-            >
-              <Text style={styles.textStyle}>Hide Modal</Text>
-            </Pressable>
-            {children}
+        <Pressable
+          style={styles.outsideModal}
+          onPress={(event: any) => {
+            if (
+              Platform.OS === "web" &&
+              event.target === event.currentTarget.firstChild
+            ) {
+              setShowModal(false);
+              dispatch(toggle_modal(false));
+            } else if (
+              Platform.OS !== "web" &&
+              event.target === event.currentTarget._children[0]
+            ) {
+              setShowModal(false);
+              dispatch(toggle_modal(false));
+            }
+          }}
+        >
+          <View style={styles.centeredView}>
+            <View style={[styles.modalView, { height: height * modalHeight }]}>
+              <Pressable
+                style={[styles.button, styles.buttonClose]}
+                onPress={() => setShowModal(false)}
+              >
+                <Text style={styles.textStyle}>Hide Modal</Text>
+              </Pressable>
+              {children}
+            </View>
           </View>
-        </View>
+        </Pressable>
       </Modal>
     </View>
   );
@@ -58,10 +85,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "flex-end",
-    marginTop: 22,
   },
   modalView: {
-    height: height * 0.65,
+    flex: 1,
     width,
     bottom: 0,
     backgroundColor: "white",
@@ -97,6 +123,9 @@ const styles = StyleSheet.create({
   modalText: {
     marginBottom: 15,
     textAlign: "center",
+  },
+  outsideModal: {
+    flex: 1,
   },
 });
 

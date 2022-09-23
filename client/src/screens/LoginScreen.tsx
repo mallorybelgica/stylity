@@ -4,17 +4,21 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import StyledTextInput from "../components/common/StyledTextInput";
 import { login } from "../services/auth";
 import { ParamListBase } from "@react-navigation/native";
+import { useDispatch } from "react-redux";
+import { get_current_user } from "../store/users/userSlice";
 
 interface Props {
   navigation: StackNavigationProp<ParamListBase>;
 }
 
 const LoginScreen: FC<Props> = ({ navigation }) => {
+  const dispatch = useDispatch();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
   const handleLogin = async () => {
     const user = await login({ email, password });
+    dispatch(get_current_user(user));
   };
 
   return (

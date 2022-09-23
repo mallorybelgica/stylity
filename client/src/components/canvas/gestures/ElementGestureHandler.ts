@@ -1,15 +1,19 @@
-import { useRef, useState } from "react";
+import { useRef, useState, createRef } from "react";
 import { Animated, View, Image } from "react-native";
 import { State } from "react-native-gesture-handler";
-import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { update_element_attributes } from "../../../store/canvas/canvasSlice";
-import { canvas } from "../../../store/selectors";
-import { CanvasElement } from "../../../types";
+import { CanvasElementType } from "../../../types";
 
 export const ElementGestureHandler = () => {
   const dispatch = useDispatch();
-  const { currentElement } = useSelector(canvas);
+  const [gesturedElement, setGesturedElement] = useState<
+    CanvasElementType | undefined
+  >();
+
+  const panRef = createRef();
+  const rotationRef = createRef();
+  const pinchRef = createRef();
 
   const viewRef = useRef<View>();
   const imageRef = useRef<Image>();
@@ -20,13 +24,10 @@ export const ElementGestureHandler = () => {
   const baseScale = new Animated.Value(1);
   const newScale = new Animated.Value(1);
 
-  const newWidth = new Animated.Value(0);
-  const newHeight = new Animated.Value(0);
-
   const scale = Animated.multiply(baseScale, newScale);
 
   const rotate = new Animated.Value(
-    currentElement?.attributes.rotate ? currentElement.attributes.rotate : 0
+    gesturedElement?.attributes.rotate ? gesturedElement.attributes.rotate : 0
   );
 
   const rotateStr = rotate.interpolate({
@@ -72,7 +73,7 @@ export const ElementGestureHandler = () => {
         ) => {
           dispatch(
             update_element_attributes({
-              _id: currentElement?._id,
+              _id: gesturedElement?._id,
               attributes: {
                 position: { left: x, top: y },
               },
@@ -95,32 +96,42 @@ export const ElementGestureHandler = () => {
       newScale.setValue(1);
     }
 
-    if (ev.nativeEvent.state === State.END && imageRef.current !== null) {
-      imageRef?.current?.measure(
-        (
-          x: number,
-          y: number,
-          width: number,
-          height: number,
-          px: number,
-          py: number
-        ) => {
-          newWidth.setValue(width);
-          newHeight.setValue(height);
-
-          dispatch(
-            update_element_attributes({
-              _id: currentElement?._id,
-              attributes: {
-                dimensions: {
-                  width: newWidth._value,
-                  height: newHeight._value,
+    if (ev.nativeEvent.state === State.END) {
+      if (gesturedElement?.type === "image" && imageRef.current !== null) {
+        imageRef?.current?.measure(
+          (
+            x: number,
+            y: number,
+            width: number,
+            height: number,
+            px: number,
+            py: number
+          ) => {
+            dispatch(
+              update_element_attributes({
+                _id: gesturedElement?._id,
+                attributes: {
+                  dimensions: {
+                    width: width,
+                    height: height,
+                  },
                 },
-              },
-            })
-          );
-        }
-      );
+              })
+            );
+          }
+        );
+      } else if (gesturedElement?.type === "text") {
+        dispatch(
+          update_element_attributes({
+            _id: gesturedElement?._id,
+            attributes: {
+              font_size:
+                gesturedElement.attributes.font_size &&
+                gesturedElement.attributes.font_size * lastScale,
+            },
+          })
+        );
+      }
     }
   };
 
@@ -133,26 +144,36 @@ export const ElementGestureHandler = () => {
     if (ev.nativeEvent.oldState === State.ACTIVE) {
       lastRotate += ev.nativeEvent.rotation;
       rotate.setOffset(lastRotate);
-      rotate.setValue(0);
+      rotate.setValue(lastRotate);
     }
 
-    if (ev.nativeEvent.state === State.END && imageRef.current !== null) {
+    if (
+      gesturedElement &&
+      ev.nativeEvent.state === State.END &&
+      imageRef.current !== null
+    ) {
       dispatch(
         update_element_attributes({
-          _id: currentElement?._id,
+          _id: gesturedElement?._id,
           attributes: {
             rotate: rotate._offset,
           },
         })
       );
+      setGesturedElement({
+        ...gesturedElement,
+        attributes: { ...gesturedElement?.attributes, rotate: rotate._offset },
+      });
     }
   };
 
   return [
+    panRef,
+    rotationRef,
+    pinchRef,
     viewRef,
     imageRef,
     scale,
-    rotate,
     rotateStr,
     translateX,
     translateY,
@@ -162,5 +183,6 @@ export const ElementGestureHandler = () => {
     pinchGestureHandler,
     rotateGestureEvent,
     rotateGestureHandler,
+    setGesturedElement,
   ];
 };

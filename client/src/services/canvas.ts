@@ -43,13 +43,25 @@ export const getCanvas = async (id: string) => {
   }
 };
 
-export const createCanvas = async (data: object) => {
+export const createCanvas = async (data: any) => {
+  console.log("test");
   try {
     const authenticated = await isAuthenticated();
     const token = await getToken();
 
+    const { user_id, elements, screenshot, caption, background_color } = data;
+
+    const canvasData = {
+      user_id,
+      elements,
+      screenshot,
+      caption,
+      background_color,
+      createdAt: new Date(),
+    };
+
     if (authenticated) {
-      const res = await axios.post(`${CANVAS_URL}`, data, {
+      const res = await axios.post(`${CANVAS_URL}`, canvasData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

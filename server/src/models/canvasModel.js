@@ -20,7 +20,11 @@ const canvasSchema = mongoose.Schema(
       required: true,
     },
     user_id: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: String,
+      required: true,
+    },
+    background_color: {
+      type: String,
       required: true,
     },
     createdAt: {
@@ -33,11 +37,12 @@ const canvasSchema = mongoose.Schema(
 
 canvasSchema.statics.list = async function (query) {
   try {
+    console.log({ query });
     const canvases = await this.find(query).exec();
-
+    console.log({ canvases });
     return canvases;
   } catch (err) {
-    throw error({ err });
+    throw console.error({ err });
   }
 };
 

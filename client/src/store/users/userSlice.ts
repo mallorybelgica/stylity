@@ -1,9 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { User } from "../../..";
+import { UserType } from "../../types";
 import { RootState } from "../store";
 
 interface UserState {
-  currentUser: User;
+  currentUser: UserType;
   isLoading: boolean;
   error?: string;
 }
@@ -11,11 +11,11 @@ interface UserState {
 const initialState: UserState = {
   currentUser: {
     _id: "",
-    displayName: "",
-    fullName: "",
+    display_name: "",
+    full_name: "",
     email: "",
     bio: "",
-    profilePic: "",
+    profile_pic: "",
     canvases: [],
     following: [],
     followers: [],

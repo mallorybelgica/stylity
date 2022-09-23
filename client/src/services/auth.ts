@@ -10,6 +10,10 @@ export const getToken = () => {
   return AsyncStorage.getItem("@stylity_token");
 };
 
+export const getAuthUser = () => {
+  return AsyncStorage.getItem("@stylity_user");
+};
+
 export const register = async (data: object) => {
   try {
     const res = await axios.post(`${AUTH_URL}/register`, data);
@@ -25,7 +29,7 @@ export const login = async (data: object) => {
     const res = await axios.post(`${AUTH_URL}/login`, data);
 
     AUTH = res.data.token;
-    USER = res.data.authUser;
+    USER = res.data.authUser._id;
 
     AsyncStorage.setItem("@stylity_token", AUTH);
     AsyncStorage.setItem("@stylity_user", JSON.stringify(USER));

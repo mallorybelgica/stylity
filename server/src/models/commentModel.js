@@ -5,10 +5,10 @@ const commentSchema = mongoose.Schema(
   {
     comment: {
       type: String,
-      required: false,
+      required: true,
     },
     author_id: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: String,
       required: true,
     },
     pid: {
@@ -20,7 +20,7 @@ const commentSchema = mongoose.Schema(
       default: [],
     },
     pid: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: String,
       required: true,
     },
     createdAt: {
