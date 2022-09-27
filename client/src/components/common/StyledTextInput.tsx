@@ -1,6 +1,8 @@
 import React, { FC, Dispatch, SetStateAction } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { TextInput } from "react-native";
+import { colors } from "../../styles/base";
+import { globalStyles } from "../../styles/global";
 
 interface Props {
   label: string;
@@ -22,8 +24,21 @@ const StyledTextInput: FC<Props> = ({
   textContentType = "none",
 }) => {
   return (
-    <View>
-      <Text>{label}</Text>
+    <View style={{ marginVertical: 5, paddingVertical: 10 }}>
+      <Text
+        style={[
+          globalStyles.headerText,
+          {
+            top: 0,
+            left: 25,
+            backgroundColor: "#fff",
+            position: "absolute",
+            paddingHorizontal: 5,
+          },
+        ]}
+      >
+        {label}
+      </Text>
       <TextInput
         onChangeText={(value) => setState(value)}
         value={value}
@@ -41,10 +56,10 @@ export default StyledTextInput;
 
 const styles = StyleSheet.create({
   input: {
-    height: 40,
-    margin: 10,
+    height: 50,
     padding: 10,
-    borderWidth: 1,
+    borderWidth: 2,
+    borderColor: colors.lightText,
     borderRadius: 50,
   },
 });

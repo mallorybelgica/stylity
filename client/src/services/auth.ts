@@ -34,8 +34,6 @@ export const login = async (data: object) => {
     AsyncStorage.setItem("@stylity_token", AUTH);
     AsyncStorage.setItem("@stylity_user", JSON.stringify(USER));
 
-    console.log({ AUTH, USER });
-
     return USER;
   } catch (err) {
     return err;

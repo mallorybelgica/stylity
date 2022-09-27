@@ -1,12 +1,5 @@
-import React, { FC, useRef, useState } from "react";
-import {
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import React, { FC, useEffect, useRef, useState } from "react";
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { captureRef } from "react-native-view-shot";
 import uuid from "react-native-uuid";
@@ -16,33 +9,45 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 import { CanvasElementType, RootStackParamsList } from "../types";
 import { globalStyles } from "../styles/global";
 import { canvas, user } from "../store/selectors";
-import { add_element } from "../store/canvas/canvasSlice";
+import { add_element, update_canvas } from "../store/canvas/canvasSlice";
 import { imageUploader } from "../helpers/utils";
-import { createCanvas, updateCanvas } from "../services/canvas";
+import { createCanvas, getCanvas, updateCanvas } from "../services/canvas";
 import { uploadImage } from "../services/assets";
 import ImageElement from "../components/canvas/ImageElement";
 import TextElement from "../components/canvas/TextElement";
 import EditPanel from "../components/canvas/modals/EditPanel";
-import { RouteProp } from "@react-navigation/native";
-
+import { RouteProp, useNavigation } from "@react-navigation/native";
+import StyledSnackbar from "../components/common/StyledSnackbar";
+import { StackNavigationProp } from "@react-navigation/stack";
 interface Props {
   route: RouteProp<RootStackParamsList, "EditCanvas">;
 }
 
 const EditCanvasScreen: FC<Props> = (props) => {
-  const { route } = props;
   const dispatch = useDispatch();
+  const navigation = useNavigation<StackNavigationProp<RootStackParamsList>>();
+  const { route } = props;
   const canvasRef = useRef<View>(null);
   const canvasId = route.params ? route.params.canvasId : "";
   const { currentUser } = useSelector(user);
   const { background_color, elements, caption } = useSelector(canvas);
+  const [showSnackbar, setShowSnackbar] = useState(false);
   const [currentElement, setCurrentElement] = useState<
     CanvasElementType | undefined
   >();
 
+  const getExistingCanvas = async () => {
+    const res = await getCanvas(canvasId);
+
+    if (res) {
+      dispatch(update_canvas(res.data));
+    }
+  };
+
   const saveCanvas = async () => {
     try {
-      console.log("test");
+      if (elements.length < 1) return;
+
       const uri = await captureRef(canvasRef, {
         format: "png",
         quality: 0.5,
@@ -53,8 +58,6 @@ const EditCanvasScreen: FC<Props> = (props) => {
         owner_type: "user",
         uri: uri,
       });
-
-      console.log({ res });
 
       const screenshot = res.data.asset._id;
       const user_id = currentUser._id;
@@ -76,6 +79,12 @@ const EditCanvasScreen: FC<Props> = (props) => {
           background_color,
         });
       }
+
+      setShowSnackbar(true);
+      navigation.push("Profile", {
+        profileUserId: currentUser._id,
+        name: currentUser.display_name,
+      });
     } catch (err) {
       return err;
     }
@@ -84,7 +93,7 @@ const EditCanvasScreen: FC<Props> = (props) => {
   const addImageElement = async () => {
     const element_id = await uuid.v4().toString();
     const res: any = await imageUploader(element_id, "canvas_element");
-    console.log({ res });
+
     if (res) {
       dispatch(
         add_element({
@@ -124,6 +133,35 @@ const EditCanvasScreen: FC<Props> = (props) => {
     );
   };
 
+  useEffect(() => {
+    navigation.addListener("beforeRemove", (ev) => {
+      if (elements.length < 1) {
+        return;
+      }
+
+      ev.preventDefault();
+
+      Alert.alert(
+        "Discard changes?",
+        "You have unsaved changes. Are you sure you want to discard them and leave the screen?",
+        [
+          { text: "Don't leave", style: "cancel", onPress: () => {} },
+          {
+            text: "Discard",
+            style: "destructive",
+            onPress: () => navigation.dispatch(ev.data.action),
+          },
+        ]
+      );
+    });
+  }, [navigation, elements]);
+
+  useEffect(() => {
+    if (canvasId) {
+      getExistingCanvas();
+    }
+  }, [canvasId]);
+
   return (
     <View style={canvasStyles.container}>
       <View style={{ justifyContent: "center" }}>
@@ -160,8 +198,8 @@ const EditCanvasScreen: FC<Props> = (props) => {
               }
             })}
         </View>
-        <ScrollView horizontal={true}>
-          <View style={canvasStyles.buttonContainer}>
+        <View style={canvasStyles.buttonContainer}>
+          <View style={canvasStyles.mainButtons}>
             {!currentElement && (
               <TouchableOpacity
                 style={globalStyles.detailedButton}
@@ -189,10 +227,20 @@ const EditCanvasScreen: FC<Props> = (props) => {
               <MaterialCommunityIcons name="format-text" size={32} />
               <Text>New Text</Text>
             </TouchableOpacity>
-            <EditPanel currentElement={currentElement} />
           </View>
-        </ScrollView>
+        </View>
+        <EditPanel
+          setShowSnackbar={setShowSnackbar}
+          currentElement={currentElement}
+          setCurrentElement={setCurrentElement}
+        />
       </View>
+      {/* <StyledSnackbar
+        showSnackbar={showSnackbar}
+        setShowSnackbar={setShowSnackbar}
+      >
+        <Text>Caption updated successfully</Text>
+      </StyledSnackbar> */}
     </View>
   );
 };
@@ -203,16 +251,23 @@ const canvasStyles = StyleSheet.create({
   container: {
     alignSelf: "stretch",
     justifyContent: "center",
+    width: "100%",
     padding: 10,
     flex: 1,
   },
   canvas: {
+    width: "100%",
     height: 450,
+    maxWidth: 450,
     overflow: "hidden",
     alignSelf: "stretch",
     borderColor: "#f6f6f6",
   },
   buttonContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  mainButtons: {
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",

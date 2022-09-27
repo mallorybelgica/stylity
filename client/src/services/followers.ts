@@ -2,16 +2,16 @@ import axios from "../config/axios";
 import queryString from "query-string";
 import { getToken, isAuthenticated } from "./auth";
 
-const COMMENTS_URL = "/v1/comments";
+const FOLLOWER_URL = "/v1/followers";
 
-export const getComments = async (filters: object) => {
+export const getFollowList = async (filters: object) => {
   try {
     const query = queryString.stringify(filters);
     const authenticated = await isAuthenticated();
     const token = await getToken();
 
     if (authenticated) {
-      const res = await axios.get(`${COMMENTS_URL}?${query}`, {
+      const res = await axios.get(`${FOLLOWER_URL}?${query}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -24,13 +24,13 @@ export const getComments = async (filters: object) => {
   }
 };
 
-export const getComment = async (id: string) => {
+export const getFollower = async (id: string) => {
   try {
     const authenticated = await isAuthenticated();
     const token = await getToken();
 
     if (authenticated) {
-      const res = await axios.get(`${COMMENTS_URL}/${id}`, {
+      const res = await axios.get(`${FOLLOWER_URL}/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -43,18 +43,21 @@ export const getComment = async (id: string) => {
   }
 };
 
-export const createComment = async (data: object) => {
+export const createFollower = async (data: any) => {
   try {
     const authenticated = await isAuthenticated();
     const token = await getToken();
 
-    const commentData = {
-      ...data,
-      createdAt: new Date(),
+    const { follower_id, followee_id } = data;
+
+    const followData = {
+      follower_id,
+      followee_id,
+      timestamp: new Date(),
     };
 
     if (authenticated) {
-      const res = await axios.post(`${COMMENTS_URL}`, commentData, {
+      const res = await axios.post(`${FOLLOWER_URL}`, followData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -67,13 +70,13 @@ export const createComment = async (data: object) => {
   }
 };
 
-export const updateComment = async (id: string, data: object) => {
+export const updateFollower = async (id: string, data: object) => {
   try {
     const authenticated = await isAuthenticated();
     const token = await getToken();
 
     if (authenticated) {
-      const res = await axios.put(`${COMMENTS_URL}/${id}`, data, {
+      const res = await axios.put(`${FOLLOWER_URL}/${id}`, data, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -86,13 +89,13 @@ export const updateComment = async (id: string, data: object) => {
   }
 };
 
-export const deleteComment = async (id: string) => {
+export const deleteFollower = async (id: string) => {
   try {
     const authenticated = await isAuthenticated();
     const token = await getToken();
 
     if (authenticated) {
-      const res = await axios.delete(`${COMMENTS_URL}/${id}`, {
+      const res = await axios.delete(`${FOLLOWER_URL}/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

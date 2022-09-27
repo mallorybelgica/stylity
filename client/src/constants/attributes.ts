@@ -41,7 +41,7 @@ export const fontFamilies = [
   { label: "Zapfino", value: "Zapfino" },
 ];
 
-export const colors = [
+export const paletteColors = [
   "#800000",
   "#8B0000",
   "#A52A2A",

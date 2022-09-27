@@ -19,7 +19,6 @@ export const imageUploader = async (ownerId: string, ownerType: string) => {
     });
 
     if (!result.cancelled) {
-      console.log({ result });
       const res = await uploadImage({
         owner_id: ownerId,
         owner_type: ownerType,

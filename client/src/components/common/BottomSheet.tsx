@@ -7,7 +7,6 @@ import React, {
 import {
   Modal,
   StyleSheet,
-  Text,
   Pressable,
   View,
   Dimensions,
@@ -19,20 +18,13 @@ import { toggle_modal } from "../../store/modal/modalSlice";
 interface Props {
   showModal: boolean;
   setShowModal: SetStateAction<any>;
-  customHeight?: number;
   children: ReactElement<any, string | JSXElementConstructor<any>>;
 }
 
 const { width, height } = Dimensions.get("window");
 
-const BottomSheet: FC<Props> = ({
-  children,
-  showModal,
-  setShowModal,
-  customHeight,
-}) => {
+const BottomSheet: FC<Props> = ({ children, showModal, setShowModal }) => {
   const dispatch = useDispatch();
-  const modalHeight = customHeight ? customHeight : 0.65;
   return (
     <View style={styles.centeredView}>
       <Modal
@@ -63,13 +55,7 @@ const BottomSheet: FC<Props> = ({
           }}
         >
           <View style={styles.centeredView}>
-            <View style={[styles.modalView, { height: height * modalHeight }]}>
-              <Pressable
-                style={[styles.button, styles.buttonClose]}
-                onPress={() => setShowModal(false)}
-              >
-                <Text style={styles.textStyle}>Hide Modal</Text>
-              </Pressable>
+            <View style={[styles.modalView, { maxHeight: height * 0.6 }]}>
               {children}
             </View>
           </View>
@@ -94,6 +80,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     padding: 20,
+    justifyContent: "center",
     alignItems: "stretch",
     shadowColor: "#000",
     shadowOffset: {

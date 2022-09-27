@@ -36,8 +36,6 @@ export const getUser = async (id: string) => {
         },
       });
 
-      console.log({ res });
-
       return res.data;
     }
   } catch (err) {

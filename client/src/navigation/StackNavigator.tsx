@@ -1,4 +1,4 @@
-import React from "react";
+import React, { FC, SetStateAction } from "react";
 import {
   createStackNavigator,
   StackNavigationProp,
@@ -20,8 +20,14 @@ import { navigationRef } from "./RouteNavigation";
 import { useNavigation } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 import { user } from "../store/selectors";
+import UserListScreen from "../screens/UsersListScreen";
+import { currentUser } from "../store/users/userSlice";
 
 const Stack = createStackNavigator<RootStackParamsList>();
+
+interface Props {
+  setAuthed: SetStateAction<any>;
+}
 
 const ProfileStackNavigator = () => {
   const { currentUser } = useSelector(user);
@@ -38,6 +44,18 @@ const ProfileStackNavigator = () => {
         })}
         name="Profile"
         component={ProfileScreen}
+      />
+      <Stack.Screen
+        options={({ route }) => ({
+          headerStyle: {
+            backgroundColor: colors.accent,
+          },
+          headerTintColor: colors.whiteText,
+          headerTitleAlign: "center",
+          title: route.params.name,
+        })}
+        name="UserList"
+        component={UserListScreen}
       />
       <Stack.Screen
         options={{ headerShown: false }}
@@ -65,11 +83,6 @@ const ProfileStackNavigator = () => {
         }}
         name="Comments"
         component={CommentsScreen}
-      />
-      <Stack.Screen
-        options={{ headerShown: false }}
-        name="Settings"
-        component={UserSettingsScreen}
       />
     </Stack.Navigator>
   );
@@ -107,11 +120,34 @@ const CanvasStackNavigator = () => {
         name="Profile"
         component={ProfileScreen}
       />
+      <Stack.Screen
+        options={({ route }) => ({
+          headerStyle: {
+            backgroundColor: colors.accent,
+          },
+          headerTintColor: colors.whiteText,
+          headerTitleAlign: "center",
+          title: route.params.name,
+        })}
+        name="UserList"
+        component={UserListScreen}
+      />
+      <Stack.Screen
+        options={{
+          headerStyle: {
+            backgroundColor: colors.accent,
+          },
+          headerTintColor: colors.whiteText,
+          headerTitleAlign: "center",
+        }}
+        name="Canvas"
+        component={CanvasDetailsScreen}
+      />
     </Stack.Navigator>
   );
 };
 
-const MainStackNavigator = () => {
+const MainStackNavigator: FC<Props> = ({ setAuthed }) => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamsList>>();
   const currentScreen = navigationRef.current?.getCurrentRoute()?.name;
 
@@ -157,6 +193,18 @@ const MainStackNavigator = () => {
         component={ProfileScreen}
       />
       <Stack.Screen
+        options={({ route }) => ({
+          headerStyle: {
+            backgroundColor: colors.accent,
+          },
+          headerTintColor: colors.whiteText,
+          headerTitleAlign: "center",
+          title: route.params.name,
+        })}
+        name="UserList"
+        component={UserListScreen}
+      />
+      <Stack.Screen
         options={{
           headerStyle: {
             backgroundColor: colors.accent,
@@ -192,17 +240,46 @@ const MainStackNavigator = () => {
           headerTitleAlign: "center",
         }}
         name="Settings"
-        component={UserSettingsScreen}
-      />
+      >
+        {(props) => <UserSettingsScreen setAuthed={setAuthed} {...props} />}
+      </Stack.Screen>
     </Stack.Navigator>
   );
 };
 
-const PublicStackNavigator = () => {
+const PublicStackNavigator: FC<Props> = ({ setAuthed }) => {
   return (
     <Stack.Navigator screenOptions={{ cardStyle: { backgroundColor: "#fff" } }}>
-      <Stack.Screen name="Login" component={LoginScreen} />
-      <Stack.Screen name="Signup" component={SignupScreen} />
+      <Stack.Screen
+        name="Login"
+        options={{
+          headerStyle: {
+            backgroundColor: colors.accent,
+          },
+          headerTitle: () => (
+            <Image
+              source={require("../../assets/logo3.png")}
+              style={navStyles.logo}
+            />
+          ),
+        }}
+      >
+        {(props) => <LoginScreen setAuthed={setAuthed} {...props} />}
+      </Stack.Screen>
+      <Stack.Screen
+        name="Signup"
+        options={{
+          headerStyle: {
+            backgroundColor: colors.accent,
+          },
+          headerTintColor: colors.whiteText,
+        }}
+      >
+        {(props) => <SignupScreen setAuthed={setAuthed} {...props} />}
+      </Stack.Screen>
+      <Stack.Screen name="Home">
+        {(props) => <MainStackNavigator setAuthed={setAuthed} {...props} />}
+      </Stack.Screen>
     </Stack.Navigator>
   );
 };

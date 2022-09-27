@@ -7,6 +7,7 @@ interface CanvasState {
   currentElement: CanvasElementType;
   elements: Array<CanvasElementType>;
   background_color: string;
+  comments_off: boolean;
   likes: Array<string>;
   screenshot: string;
   user_id: string;
@@ -24,6 +25,7 @@ const initialState: CanvasState = {
     attributes: { position: { left: 50, top: 50 }, rotate: 0 },
     type: "",
   },
+  comments_off: false,
   background_color: "#fff",
   elements: [],
   likes: [],

@@ -1,6 +1,6 @@
 import { RouteProp } from "@react-navigation/native";
 import React, { FC, useCallback, useEffect, useState } from "react";
-import { View, StyleSheet, ScrollView } from "react-native";
+import { View, ScrollView } from "react-native";
 import Comment from "../components/comment/Comment";
 import CommentInput from "../components/comment/CommentInput";
 import { getComments } from "../services/comments";

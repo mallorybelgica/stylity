@@ -1,9 +1,23 @@
-import React, { useState } from "react";
-import { Button, View } from "react-native";
+import { ParamListBase } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import React, { FC, SetStateAction, useState } from "react";
+import { Text, StyleSheet, View, TouchableOpacity } from "react-native";
+import { useDispatch } from "react-redux";
+import StyledButton from "../components/common/StyledButton";
 import StyledTextInput from "../components/common/StyledTextInput";
 import { register } from "../services/auth";
+import { user } from "../store/selectors";
+import { get_current_user } from "../store/users/userSlice";
+import { colors } from "../styles/base";
+import { globalStyles } from "../styles/global";
 
-const SignupScreen = () => {
+interface Props {
+  navigation: StackNavigationProp<ParamListBase>;
+  setAuthed: SetStateAction<any>;
+}
+
+const SignupScreen: FC<Props> = ({ setAuthed, navigation }) => {
+  const dispatch = useDispatch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [displayName, setDisplayName] = useState("");
@@ -16,12 +30,15 @@ const SignupScreen = () => {
       display_name: displayName,
       full_name: fullName,
     });
-    console.log({ newUser });
-    return newUser;
+
+    if (newUser) {
+      setAuthed(true);
+      dispatch(get_current_user(user));
+    }
   };
 
   return (
-    <View>
+    <View style={signupStyles.container}>
       <StyledTextInput
         label="Email"
         setState={setEmail}
@@ -49,9 +66,39 @@ const SignupScreen = () => {
         setState={setFullName}
         value={fullName}
       />
-      <Button title="Sign up" onPress={handleSignup} />
+      <StyledButton
+        title="Create Account"
+        bgColor={colors.accent}
+        titleColor={colors.whiteText}
+        customButtonStyles={{
+          height: 60,
+          justifyContent: "center",
+          marginHorizontal: 0,
+          marginVertical: 5,
+        }}
+        customTitleStyles={{ fontSize: 16 }}
+        handler={handleSignup}
+      />
+      <View style={signupStyles.loginContainer}>
+        <Text style={globalStyles.text}>Already have an account?</Text>
+        <TouchableOpacity onPress={() => navigation.navigate("Login")}>
+          <Text style={[globalStyles.headerText, { marginHorizontal: 5 }]}>
+            Login
+          </Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
 
 export default SignupScreen;
+
+const signupStyles = StyleSheet.create({
+  container: {
+    padding: 10,
+  },
+  loginContainer: {
+    marginVertical: 5,
+    flexDirection: "row",
+  },
+});

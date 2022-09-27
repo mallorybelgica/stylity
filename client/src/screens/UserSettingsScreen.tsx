@@ -1,17 +1,26 @@
-import React, { useState } from "react";
+import React, { FC, SetStateAction, useState } from "react";
 import { Button, View } from "react-native";
 import StyledTextInput from "../components/common/StyledTextInput";
 import { logout } from "../services/auth";
 import { imageUploader } from "../helpers/utils";
+import { RouteProp } from "@react-navigation/native";
+import { RootStackParamsList } from "../types";
 
-const UserSettingsScreen = () => {
+interface Props {
+  setAuthed: SetStateAction<any>;
+}
+
+const UserSettingsScreen: FC<Props> = ({ setAuthed }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [displayName, setDisplayName] = useState("");
   const [fullName, setFullName] = useState("");
   const [image, setImage] = useState("");
 
-  const handleSignout = () => logout();
+  const handleSignout = () => {
+    logout();
+    setAuthed(false);
+  };
 
   return (
     <View>

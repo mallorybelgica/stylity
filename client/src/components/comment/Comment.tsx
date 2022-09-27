@@ -18,6 +18,7 @@ import { deleteComment, updateComment } from "../../services/comments";
 import { getUser } from "../../services/user";
 import { user } from "../../store/selectors";
 import { colors } from "../../styles/base";
+import { globalStyles } from "../../styles/global";
 import { CommentType, RootStackParamsList, UserType } from "../../types";
 
 interface Props {
@@ -111,27 +112,31 @@ const Comment: FC<Props> = ({ comment, reload }) => {
                 source={{
                   uri: `${REACT_APP_AWS_URL}/${author?.profile_pic}.jpeg`,
                 }}
-                style={commentStyles.profilePic}
+                style={globalStyles.profilePic}
               />
             ) : (
               <MaterialCommunityIcons
                 name="account-circle"
                 color="black"
-                size={40}
+                size={50}
               />
             )}
-            <View style={commentStyles.commentText}>
+            <View style={commentStyles.comment}>
               <TouchableOpacity
-                onPress={() =>
+                onPress={() => {
                   navigation.push("Profile", {
                     profileUserId: author._id,
                     name: author.display_name,
-                  })
-                }
+                  });
+                }}
               >
-                <Text style={commentStyles.author}>{author.display_name}</Text>
+                <Text style={globalStyles.headerText}>
+                  {author.display_name}
+                </Text>
               </TouchableOpacity>
-              <Text style={commentStyles.comment}>{comment.comment}</Text>
+              <Text style={[globalStyles.text, { marginVertical: 5 }]}>
+                {comment.comment}
+              </Text>
               {likes.length > 0 && (
                 <Text>
                   {likes.length} {likes.length === 1 ? "like" : "likes"}
@@ -167,20 +172,14 @@ const commentStyles = StyleSheet.create({
     justifyContent: "space-between",
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: colors.primary,
   },
   commentDetails: {
     flexDirection: "row",
     justifyContent: "flex-start",
     alignItems: "center",
   },
-  commentText: {
-    paddingHorizontal: 10,
-  },
-  author: {
-    fontWeight: "bold",
-  },
   comment: {
+    paddingHorizontal: 10,
     paddingVertical: 5,
   },
   rightAction: {
@@ -193,10 +192,5 @@ const commentStyles = StyleSheet.create({
   actionIcon: {
     width: 30,
     marginHorizontal: 10,
-  },
-  profilePic: {
-    height: 40,
-    width: 40,
-    borderRadius: 100,
   },
 });

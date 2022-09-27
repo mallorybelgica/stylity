@@ -1,3 +1,5 @@
+import { SetStateAction } from "react";
+
 export type AttributesType = {
   dimensions?: { width: number; height: number };
   position: { left: number; top: number };
@@ -15,6 +17,7 @@ export type CanvasType = {
   _id: string;
   caption: "";
   background_color: string;
+  comments_off: boolean;
   createdAt: string | Date;
   elements: Array<CanvasElementType>;
   likes: Array<string>;
@@ -53,12 +56,20 @@ export type UserType = {
   followers: Array<string>;
 };
 
+export type FollowerType = {
+  _id: string;
+  follower_id: string;
+  followee_id: string;
+  timestamp: string | Date;
+};
+
 export type RootStackParamsList = {
   Profile: { profileUserId: string; name: string };
   Home: undefined;
   EditCanvas: { canvasId: string };
-  Canvas: { canvas: CanvasType };
+  Canvas: { canvasId: string };
   Comments: { pid: string };
+  UserList: { userList: Array<string>; name: string };
   Settings: undefined;
   Login: undefined;
   Signup: undefined;

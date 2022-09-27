@@ -1,8 +1,9 @@
 import { StackNavigationProp } from "@react-navigation/stack";
 import React, { FC, useEffect, useState } from "react";
-import { ScrollView, StyleSheet, Text, View, Dimensions } from "react-native";
+import { ScrollView, StyleSheet, Text } from "react-native";
 import { useSelector } from "react-redux";
 import CanvasSnapshot from "../components/CanvasSnapshot";
+import ActivityLoader from "../components/common/ActivityLoader";
 import { getCanvases } from "../services/canvas";
 import { user } from "../store/selectors";
 import { RootStackParamsList } from "../types";
@@ -14,12 +15,14 @@ interface Props {
 const HomeFeedScreen: FC<Props> = (props) => {
   const { currentUser } = useSelector(user);
   const [homeFeedCanvases, setHomeFeedCanvases] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const getHomeFeedCanvases = async () => {
     const res = await getCanvases({ user_id: currentUser?.following });
 
     if (res) {
       setHomeFeedCanvases(res.data);
+      setIsLoading(false);
     }
   };
 
@@ -28,6 +31,10 @@ const HomeFeedScreen: FC<Props> = (props) => {
       getHomeFeedCanvases();
     }
   }, [currentUser]);
+
+  if (isLoading) {
+    return <ActivityLoader />;
+  }
 
   return (
     <ScrollView style={homeFeedStyles.container}>

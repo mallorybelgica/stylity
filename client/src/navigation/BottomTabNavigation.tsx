@@ -1,9 +1,8 @@
-import React from "react";
+import React, { FC, SetStateAction } from "react";
 import { StyleSheet } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { colors } from "../styles/base";
-import { navigationRef } from "../navigation/RouteNavigation";
 
 import {
   CanvasStackNavigator,
@@ -11,12 +10,13 @@ import {
   ProfileStackNavigator,
 } from "./StackNavigator";
 
+interface Props {
+  setAuthed: SetStateAction<any>;
+}
+
 const Tab = createBottomTabNavigator();
 
-const BottomTabNavigator = () => {
-  const route = navigationRef.current?.getCurrentRoute(); //current route object
-  const currentScreen = route?.name; // current screen name
-
+const BottomTabNavigator: FC<Props> = ({ setAuthed }) => {
   return (
     <Tab.Navigator
       sceneContainerStyle={{ backgroundColor: "#fff" }}
@@ -43,8 +43,9 @@ const BottomTabNavigator = () => {
           ),
         }}
         name="Home"
-        component={MainStackNavigator}
-      />
+      >
+        {(props) => <MainStackNavigator setAuthed={setAuthed} {...props} />}
+      </Tab.Screen>
       <Tab.Screen
         options={{
           headerShown: false,

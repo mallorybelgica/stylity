@@ -10,6 +10,7 @@ import { useSelector } from "react-redux";
 import { createComment } from "../../services/comments";
 import { user } from "../../store/selectors";
 import { colors } from "../../styles/base";
+import { globalStyles } from "../../styles/global";
 
 interface Props {
   pid: string;
@@ -19,6 +20,7 @@ interface Props {
 const CommentInput: FC<Props> = ({ pid, reload }) => {
   const { currentUser } = useSelector(user);
   const [comment, onChangeComment] = useState("");
+  const [newHeight, setNewHeight] = useState(1);
 
   const handleSubmit = () => {
     if (comment === "") return;
@@ -30,13 +32,19 @@ const CommentInput: FC<Props> = ({ pid, reload }) => {
   return (
     <View style={styles.container}>
       <TextInput
+        multiline={true}
         value={comment}
+        onContentSizeChange={(ev) => {
+          setNewHeight(ev.nativeEvent.contentSize.height);
+        }}
         onChangeText={onChangeComment}
         onSubmitEditing={handleSubmit}
-        style={styles.input}
+        style={[styles.input, { height: comment.length < 38 ? 40 : newHeight }]}
       />
       <TouchableHighlight onPress={handleSubmit} style={styles.button}>
-        <Text style={styles.buttonText}>Comment</Text>
+        <Text style={[globalStyles.headerText, { color: colors.accent }]}>
+          Comment
+        </Text>
       </TouchableHighlight>
     </View>
   );
@@ -47,20 +55,20 @@ export default CommentInput;
 export const styles = StyleSheet.create({
   container: {
     justifyContent: "center",
+    marginTop: 15,
+    marginBottom: 5,
+    marginHorizontal: 10,
   },
   input: {
-    borderRadius: 50,
-    height: 40,
-    padding: 10,
-    margin: 5,
+    borderRadius: 20,
+    paddingVertical: 10,
+    paddingLeft: 10,
+    paddingRight: 100,
     borderWidth: 1,
+    fontSize: 16,
   },
   button: {
     position: "absolute",
     right: 20,
-  },
-  buttonText: {
-    color: colors.accent,
-    fontWeight: "bold",
   },
 });

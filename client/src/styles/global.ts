@@ -19,8 +19,41 @@ export const globalStyles = StyleSheet.create({
     alignItems: "center",
   },
   detailedButton: {
-    padding: 10,
+    margin: 5,
     justifyContent: "center",
     alignItems: "center",
+  },
+  listButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-start",
+    height: 50,
+    padding: 5,
+    textAlign: "center",
+    borderRadius: 5,
+    borderWidth: 1.5,
+    marginVertical: 5,
+    borderColor: colors.accent,
+  },
+  listButtonText: {
+    textTransform: "uppercase",
+    fontWeight: "700",
+    fontSize: 14,
+    paddingHorizontal: 15,
+    textAlign: "center",
+    whiteSpace: "normal",
+    color: colors.accent,
+  },
+  headerText: {
+    fontWeight: "bold",
+    fontSize: 16,
+  },
+  text: {
+    fontSize: 16,
+  },
+  profilePic: {
+    height: 50,
+    width: 50,
+    borderRadius: 100,
   },
 });

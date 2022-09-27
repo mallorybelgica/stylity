@@ -24,6 +24,11 @@ const TextFormatModal: FC<Props> = ({ currentElement }) => {
   const [isUnderlined, setIsUnderlined] = useCallbackState(false);
   const [isUppercase, setIsUppercase] = useCallbackState(false);
 
+  const handleShowModal = () => {
+    setShowModal(!showModal);
+    dispatch(toggle_modal(!showModal));
+  };
+
   const handleFontSize = (value: number) => {
     dispatch(
       update_element_attributes({
@@ -36,6 +41,7 @@ const TextFormatModal: FC<Props> = ({ currentElement }) => {
   };
 
   const handleFontWeight = (value: boolean) => {
+    setIsBold(value);
     dispatch(
       update_element_attributes({
         _id: currentElement?._id,
@@ -47,6 +53,7 @@ const TextFormatModal: FC<Props> = ({ currentElement }) => {
   };
 
   const handleFontStyle = (value: boolean) => {
+    setIsItalic(value);
     dispatch(
       update_element_attributes({
         _id: currentElement?._id,
@@ -58,6 +65,7 @@ const TextFormatModal: FC<Props> = ({ currentElement }) => {
   };
 
   const handleTextDecoration = (value: boolean) => {
+    setIsUnderlined(value);
     dispatch(
       update_element_attributes({
         _id: currentElement?._id,
@@ -69,6 +77,7 @@ const TextFormatModal: FC<Props> = ({ currentElement }) => {
   };
 
   const handleUppercase = (value: boolean) => {
+    setIsUppercase(value);
     dispatch(
       update_element_attributes({
         _id: currentElement?._id,
@@ -92,10 +101,7 @@ const TextFormatModal: FC<Props> = ({ currentElement }) => {
     <View>
       <TouchableOpacity
         style={globalStyles.detailedButton}
-        onPress={() => {
-          setShowModal(true);
-          dispatch(toggle_modal(true));
-        }}
+        onPress={handleShowModal}
       >
         <MaterialCommunityIcons name="format-size" size={32} />
         <Text>Text Format</Text>
@@ -116,7 +122,11 @@ const TextFormatModal: FC<Props> = ({ currentElement }) => {
                   : textFormatStyles.formatButton
               }
             >
-              <MaterialCommunityIcons name={"format-bold"} size={28} />
+              <MaterialCommunityIcons
+                name={"format-bold"}
+                color={colors.accent}
+                size={28}
+              />
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => {
@@ -131,7 +141,11 @@ const TextFormatModal: FC<Props> = ({ currentElement }) => {
                   : textFormatStyles.formatButton
               }
             >
-              <MaterialCommunityIcons name={"format-italic"} size={28} />
+              <MaterialCommunityIcons
+                name={"format-italic"}
+                color={colors.accent}
+                size={28}
+              />
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => {
@@ -146,7 +160,11 @@ const TextFormatModal: FC<Props> = ({ currentElement }) => {
                   : textFormatStyles.formatButton
               }
             >
-              <MaterialCommunityIcons name={"format-underline"} size={28} />
+              <MaterialCommunityIcons
+                name={"format-underline"}
+                color={colors.accent}
+                size={28}
+              />
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => {
@@ -161,7 +179,11 @@ const TextFormatModal: FC<Props> = ({ currentElement }) => {
                   : textFormatStyles.formatButton
               }
             >
-              <MaterialCommunityIcons name={"format-letter-case"} size={28} />
+              <MaterialCommunityIcons
+                name={"format-letter-case"}
+                color={colors.accent}
+                size={28}
+              />
             </TouchableOpacity>
           </View>
           <View>
@@ -186,6 +208,25 @@ const TextFormatModal: FC<Props> = ({ currentElement }) => {
               thumbTintColor={colors.background}
             />
           </View>
+          <TouchableOpacity
+            onPress={handleShowModal}
+            style={[
+              globalStyles.detailedButton,
+              globalStyles.listButton,
+              { backgroundColor: colors.accent },
+            ]}
+          >
+            <MaterialCommunityIcons
+              name="close-thick"
+              color={colors.whiteText}
+              size={26}
+            />
+            <Text
+              style={[globalStyles.listButtonText, { color: colors.whiteText }]}
+            >
+              Close
+            </Text>
+          </TouchableOpacity>
         </View>
       </BottomSheet>
     </View>
@@ -209,16 +250,16 @@ const textFormatStyles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 10,
-    borderColor: colors.lightText,
-    borderWidth: 2.5,
+    borderColor: colors.accent,
+    borderWidth: 1.5,
   },
   acitiveFormatButton: {
     marginVertical: 10,
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 10,
-    borderColor: colors.primaryText,
-    backgroundColor: colors.lightText,
-    borderWidth: 2.5,
+    borderColor: colors.accent,
+    backgroundColor: colors.primary,
+    borderWidth: 1.5,
   },
 });

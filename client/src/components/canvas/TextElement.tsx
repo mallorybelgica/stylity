@@ -154,7 +154,7 @@ const TextElement: FC<Props> = ({
                         : "none",
                       color: element.attributes.color,
                     }}
-                    onPress={() => setEditText(true)}
+                    onLongPress={() => setEditText(true)}
                   >
                     {textValue}
                   </Text>

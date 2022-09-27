@@ -6,7 +6,6 @@ import { Platform } from "react-native";
 const ASSET_URL = "/v1/assets";
 
 export const uploadImage = async (data: any) => {
-  console.log({ Platform });
   const { owner_id, owner_type, uri } = data;
 
   try {

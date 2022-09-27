@@ -44,7 +44,6 @@ export const getCanvas = async (id: string) => {
 };
 
 export const createCanvas = async (data: any) => {
-  console.log("test");
   try {
     const authenticated = await isAuthenticated();
     const token = await getToken();

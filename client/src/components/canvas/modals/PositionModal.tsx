@@ -12,6 +12,7 @@ import {
 import { globalStyles } from "../../../styles/global";
 import { CanvasElementType } from "../../../types";
 import { toggle_modal } from "../../../store/modal/modalSlice";
+import { colors } from "../../../styles/base";
 
 interface Props {
   currentElement: CanvasElementType | undefined;
@@ -20,6 +21,12 @@ interface Props {
 const PositionModal: FC<Props> = ({ currentElement }) => {
   const dispatch = useDispatch();
   const [showModal, setShowModal] = useState(false);
+
+  const handleShowModal = () => {
+    setShowModal(!showModal);
+    dispatch(toggle_modal(!showModal));
+  };
+
   const bringForward = () =>
     dispatch(send_element_forward(currentElement?._id));
   const sendBackward = () =>
@@ -31,10 +38,7 @@ const PositionModal: FC<Props> = ({ currentElement }) => {
     <View>
       <TouchableOpacity
         style={globalStyles.detailedButton}
-        onPress={() => {
-          setShowModal(true);
-          dispatch(toggle_modal(true));
-        }}
+        onPress={handleShowModal}
       >
         <MaterialCommunityIcons name="view-dashboard-outline" size={32} />
         <Text>Position</Text>
@@ -44,42 +48,71 @@ const PositionModal: FC<Props> = ({ currentElement }) => {
           <View style={textFormatStyles.buttonContainer}>
             <TouchableOpacity
               onPress={sendBackward}
-              style={textFormatStyles.positionButton}
+              style={[globalStyles.detailedButton, globalStyles.listButton]}
             >
               <MaterialCommunityIcons
                 name={"arrange-send-backward"}
+                color={colors.accent}
                 size={26}
               />
-              <Text style={textFormatStyles.buttonText}>Send Backward</Text>
+              <Text style={globalStyles.listButtonText}>Send Backward</Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={bringForward}
-              style={textFormatStyles.positionButton}
+              style={[globalStyles.detailedButton, globalStyles.listButton]}
             >
               <MaterialCommunityIcons
                 name={"arrange-bring-forward"}
+                color={colors.accent}
                 size={26}
               />
-              <Text style={textFormatStyles.buttonText}>Bring Forward</Text>
+              <Text style={globalStyles.listButtonText}>Bring Forward</Text>
             </TouchableOpacity>
           </View>
           <View style={textFormatStyles.buttonContainer}>
             <TouchableOpacity
               onPress={sendToBack}
-              style={textFormatStyles.positionButton}
+              style={[globalStyles.detailedButton, globalStyles.listButton]}
             >
-              <MaterialCommunityIcons name={"arrange-send-to-back"} size={26} />
-              <Text style={textFormatStyles.buttonText}>Send to Back</Text>
+              <MaterialCommunityIcons
+                name={"arrange-send-to-back"}
+                color={colors.accent}
+                size={26}
+              />
+              <Text style={globalStyles.listButtonText}>Send to Back</Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={bringToFront}
-              style={textFormatStyles.positionButton}
+              style={[globalStyles.detailedButton, globalStyles.listButton]}
             >
               <MaterialCommunityIcons
                 name={"arrange-bring-to-front"}
+                color={colors.accent}
                 size={26}
               />
-              <Text style={textFormatStyles.buttonText}>Bring to Front</Text>
+              <Text style={globalStyles.listButtonText}>Bring to Front</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={handleShowModal}
+              style={[
+                globalStyles.detailedButton,
+                globalStyles.listButton,
+                { backgroundColor: colors.accent },
+              ]}
+            >
+              <MaterialCommunityIcons
+                name="close-thick"
+                color={colors.whiteText}
+                size={26}
+              />
+              <Text
+                style={[
+                  globalStyles.listButtonText,
+                  { color: colors.whiteText },
+                ]}
+              >
+                Close
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -94,22 +127,10 @@ const textFormatStyles = StyleSheet.create({
   positionContainer: {
     justifyContent: "center",
     alignItems: "stretch",
+    boxSizing: "border-box",
   },
   buttonContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  positionButton: {
-    width: 150,
-    marginHorizontal: 10,
-    marginVertical: 5,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "flex-start",
-  },
-  buttonText: {
-    fontSize: 16,
-    paddingLeft: 10,
+    justifyContent: "space-between",
+    alignItems: "stretch",
   },
 });

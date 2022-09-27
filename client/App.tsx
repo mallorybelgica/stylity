@@ -33,7 +33,6 @@ function App() {
   const { isOpen } = useSelector(modal);
   const fadeAnimation = new Animated.Value(0);
   const [authed, setAuthed] = useState<boolean | null>(null);
-  console.log({ Platform });
   const handleAuthentication = async () => setAuthed(await isAuthenticated());
   const handleAuthUser = async () => {
     const res = await getAuthUser();
@@ -70,7 +69,11 @@ function App() {
   return (
     <GestureHandlerRootView style={globalStyles.container}>
       <NavigationContainer ref={navigationRef}>
-        {authed ? <BottomTabNavigator /> : <PublicStackNavigator />}
+        {authed ? (
+          <BottomTabNavigator setAuthed={setAuthed} />
+        ) : (
+          <PublicStackNavigator setAuthed={setAuthed} />
+        )}
         {isOpen && (
           <Animated.View
             style={{

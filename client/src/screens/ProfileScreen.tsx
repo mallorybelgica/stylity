@@ -1,5 +1,5 @@
 import React, { FC, useCallback, useEffect, useState } from "react";
-import { NavigationProp, RouteProp } from "@react-navigation/native";
+import { RouteProp } from "@react-navigation/native";
 import {
   Image,
   SafeAreaView,
@@ -13,27 +13,44 @@ import { useSelector } from "react-redux";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { getCanvases } from "../services/canvas";
 import { user } from "../store/selectors";
-import { CanvasType, RootStackParamsList, UserType } from "../types";
-import { getUser, updateUser } from "../services/user";
+import {
+  CanvasType,
+  FollowerType,
+  RootStackParamsList,
+  UserType,
+} from "../types";
+import { getUser } from "../services/user";
 import ActivityLoader from "../components/common/ActivityLoader";
 import { colors } from "../styles/base";
 import { REACT_APP_AWS_URL } from "@env";
+import { globalStyles } from "../styles/global";
+import {
+  createFollower,
+  deleteFollower,
+  getFollowList,
+} from "../services/followers";
+import { StackNavigationProp } from "@react-navigation/stack";
 
 interface Props {
-  navigation: NavigationProp<RootStackParamsList>;
+  navigation: StackNavigationProp<RootStackParamsList>;
   route: RouteProp<RootStackParamsList, "Profile">;
 }
 
 const ProfileScreen: FC<Props> = (props) => {
-  const { navigation, route } = props;
+  const { route, navigation } = props;
   const { currentUser } = useSelector(user);
   const profileUserId = route.params
     ? route.params.profileUserId
     : currentUser._id;
   const [profileUser, setProfileUser] = useState<UserType>();
   const [profileCanvases, setProfileCanvases] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [followingList, setFollowingList] = useState<Array<FollowerType>>([]);
+  const [followerList, setFollowerList] = useState<Array<FollowerType>>([]);
   const [reloadKey, setReloadKey] = useState(0);
+
+  const [isProfileLoading, setIsProfileLoading] = useState(true);
+  const [isFollowersLoading, setIsFollowersLoading] = useState(true);
+  const [isFollowingLoading, setIsFollowingLoading] = useState(true);
 
   const getProfileData = async () => {
     const user = await getUser(profileUserId);
@@ -44,39 +61,88 @@ const ProfileScreen: FC<Props> = (props) => {
       if (canvases) {
         setProfileUser(user.data);
         setProfileCanvases(canvases.data);
-        setIsLoading(false);
+        setIsProfileLoading(false);
       }
+    }
+  };
+
+  const getFollowerList = async () => {
+    const res = await getFollowList({ followee_id: profileUserId });
+
+    if (res) {
+      setFollowerList(res.data);
+      setIsFollowersLoading(false);
+    }
+  };
+
+  const getFollowingList = async () => {
+    const res = await getFollowList({ follower_id: profileUserId });
+
+    if (res) {
+      setFollowingList(res.data);
+      setIsFollowingLoading(false);
     }
   };
 
   const reload = useCallback(() => {
     setReloadKey((prevReloadKey) => prevReloadKey + 1);
-    setIsLoading(true);
   }, []);
 
-  const handleFollow = () => {
+  const handleFollow = async () => {
     if (profileUser) {
-      const newArray = [...profileUser.followers];
-      const index = newArray.indexOf(currentUser._id);
-      if (newArray.includes(currentUser._id)) {
-        newArray.splice(index, 1);
+      if (
+        followerList.some((follower) =>
+          follower.follower_id.includes(currentUser._id)
+        )
+      ) {
+        const followerItem: any = followerList.find(
+          (follower) => follower.follower_id === currentUser._id
+        );
+        deleteFollower(followerItem._id);
       } else {
-        newArray.push(currentUser._id);
+        createFollower({
+          follower_id: currentUser._id,
+          followee_id: profileUserId,
+        });
       }
-
-      updateUser(profileUserId, { ...profileUser, followers: newArray });
+      followerList.map((follower) => {
+        if (follower.follower_id.includes(currentUser._id)) {
+        } else {
+          createFollower({
+            follower_id: currentUser._id,
+            followee_id: profileUserId,
+          });
+        }
+      });
     }
+    reload();
   };
 
   useEffect(() => {
-    getProfileData();
-  }, [reloadKey]);
+    if (profileUserId) {
+      getProfileData();
+      getFollowerList();
+      getFollowingList();
+    }
+  }, [profileUserId, reloadKey]);
 
   useEffect(() => {
-    getProfileData();
-  }, [profileUserId]);
+    const unsubscribe = navigation.addListener("focus", () => {
+      setIsProfileLoading(true);
+      setIsFollowersLoading(true);
+      setIsFollowingLoading(true);
 
-  if (isLoading) {
+      if (profileUserId) {
+        getProfileData();
+        getFollowerList();
+        getFollowingList();
+      }
+    });
+
+    return unsubscribe;
+  }, []);
+
+  if (isProfileLoading || isFollowingLoading || isFollowersLoading) {
     return <ActivityLoader />;
   }
 
@@ -87,22 +153,31 @@ const ProfileScreen: FC<Props> = (props) => {
           {profileUser.profile_pic ? (
             <Image
               source={{ uri: profileUser.profile_pic }}
-              style={profileStyles.profilePic}
+              style={[globalStyles.profilePic, { alignSelf: "center" }]}
             />
           ) : (
             <MaterialCommunityIcons
               name="account-circle"
               color={"black"}
               size={50}
-              style={profileStyles.profilePic}
+              style={[globalStyles.profilePic, { alignSelf: "center" }]}
             />
           )}
-          <Text style={profileStyles.displayName}>{profileUser.full_name}</Text>
-          <Text style={profileStyles.bio}>{profileUser.bio}</Text>
+          <Text style={[globalStyles.headerText, { textAlign: "center" }]}>
+            {profileUser.full_name}
+          </Text>
+          <Text style={[globalStyles.text, { textAlign: "center" }]}>
+            {profileUser.bio}
+          </Text>
           {profileUser._id !== currentUser._id && (
-            <TouchableOpacity style={profileStyles.followButton}>
+            <TouchableOpacity
+              onPress={handleFollow}
+              style={profileStyles.followButton}
+            >
               <Text style={profileStyles.followButtonText}>
-                {profileUser.followers?.includes(currentUser._id)
+                {followerList?.some((follower: FollowerType) =>
+                  follower.follower_id.includes(currentUser._id)
+                )
                   ? "Unfollow"
                   : "Follow"}
               </Text>
@@ -113,13 +188,35 @@ const ProfileScreen: FC<Props> = (props) => {
               {profileCanvases.length}
               {profileCanvases.length === 1 ? " canvas" : " canvases"}
             </Text>
-            <Text style={profileStyles.statsText}>
-              {profileUser.followers?.length}
-              {profileUser.followers?.length === 1 ? " follower" : " followers"}
-            </Text>
-            <Text style={profileStyles.statsText}>
-              {profileUser.following?.length} following
-            </Text>
+            <TouchableOpacity
+              onPress={() =>
+                navigation.push("UserList", {
+                  userList: followerList.map(
+                    (follower) => follower.follower_id
+                  ),
+                  name: `${profileUser.display_name}'s Followers`,
+                })
+              }
+            >
+              <Text style={profileStyles.statsText}>
+                {followerList.length}
+                {followerList.length === 1 ? " follower" : " followers"}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() =>
+                navigation.push("UserList", {
+                  userList: followingList.map(
+                    (follower) => follower.followee_id
+                  ),
+                  name: `${profileUser.display_name}'s Follows`,
+                })
+              }
+            >
+              <Text style={profileStyles.statsText}>
+                {followingList.length} following
+              </Text>
+            </TouchableOpacity>
           </View>
         </View>
       )}
@@ -137,7 +234,7 @@ const ProfileScreen: FC<Props> = (props) => {
               <View style={profileStyles.canvas} key={index}>
                 <TouchableOpacity
                   onPress={() =>
-                    navigation.navigate("Canvas", { canvas: canvas })
+                    navigation.push("Canvas", { canvasId: canvas._id })
                   }
                 >
                   <Image
@@ -168,18 +265,6 @@ const profileStyles = StyleSheet.create({
     textAlign: "center",
     margin: 10,
   },
-  profilePic: {
-    alignSelf: "center",
-    height: 50,
-    width: 50,
-    borderRadius: 100,
-    marginBottom: 10,
-  },
-  displayName: {
-    fontWeight: "bold",
-    fontSize: 16,
-    alignSelf: "center",
-  },
   followButton: {
     width: 100,
     height: 30,
@@ -193,10 +278,6 @@ const profileStyles = StyleSheet.create({
   followButtonText: {
     fontSize: 14,
     fontWeight: "bold",
-  },
-  bio: {
-    fontSize: 16,
-    alignSelf: "center",
   },
   stats: {
     flexDirection: "row",

@@ -4,7 +4,6 @@ import React, { FC, useEffect, useState } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { useSelector } from "react-redux";
-import { useDispatch } from "react-redux";
 import { updateCanvas } from "../services/canvas";
 import { getComments } from "../services/comments";
 import { getUser } from "../services/user";
@@ -17,18 +16,17 @@ import CanvasSnapshotModal from "../components/canvas/modals/CanvasSnapshotModal
 interface Props {
   canvas: CanvasType;
   navigation: StackNavigationProp<RootStackParamsList>;
+  reload?: any;
+  reloadKey?: number;
 }
 
 const CanvasSnapshot: FC<Props> = (props) => {
-  const dispatch = useDispatch();
-  const { navigation, canvas } = props;
+  const { navigation, canvas, reload, reloadKey } = props;
   const { currentUser } = useSelector(user);
   const [creator, setCreator] = useState<any>();
   const [comments, setComments] = useState([]);
   const [likes, setLikes] = useState<Array<string>>([]);
   const [viewMore, setViewMore] = useState(false);
-
-  console.log({ canvas, creator });
 
   const getCommentsByCanvas = async () => {
     const res = await getComments({ pid: canvas._id });
@@ -68,14 +66,16 @@ const CanvasSnapshot: FC<Props> = (props) => {
 
   return (
     <View style={snapshotStyles.container}>
-      <CanvasSnapshotModal />
+      {canvas.user_id === currentUser._id && (
+        <CanvasSnapshotModal canvas={canvas} reload={reload} />
+      )}
       {canvas && creator && (
         <View>
           <Image
             source={{ uri: `${REACT_APP_AWS_URL}/${canvas.screenshot}.jpeg` }}
             style={snapshotStyles.canvas}
           />
-          <Text>
+          <Text style={[globalStyles.text, { marginVertical: 5 }]}>
             {canvas.caption?.length > 140
               ? viewMore
                 ? canvas.caption
@@ -93,7 +93,7 @@ const CanvasSnapshot: FC<Props> = (props) => {
           <View style={[globalStyles.row, { justifyContent: "space-between" }]}>
             <TouchableOpacity
               onPress={() =>
-                navigation.navigate("Profile", {
+                navigation.push("Profile", {
                   profileUserId: creator._id,
                   name: creator.display_name,
                 })
@@ -104,15 +104,15 @@ const CanvasSnapshot: FC<Props> = (props) => {
                 <MaterialCommunityIcons
                   name="account-circle"
                   color={"black"}
-                  size={40}
+                  size={50}
                 />
               ) : (
                 <Image
                   source={{ uri: creator?.profile_pic }}
-                  style={snapshotStyles.profilePic}
+                  style={globalStyles.profilePic}
                 />
               )}
-              <Text style={snapshotStyles.creator}>
+              <Text style={[globalStyles.headerText, { marginLeft: 5 }]}>
                 {creator?.display_name}
               </Text>
             </TouchableOpacity>
@@ -144,27 +144,32 @@ const CanvasSnapshot: FC<Props> = (props) => {
                   )}
                 </TouchableOpacity>
               </View>
-              <View
-                style={[globalStyles.row, { justifyContent: "space-between" }]}
-              >
-                <Text style={snapshotStyles.buttonText}>
-                  {comments.length >= 1000
-                    ? comments.length / 1000 + "k"
-                    : comments.length}
-                </Text>
-                <TouchableOpacity
-                  onPress={() =>
-                    navigation.navigate("Comments", { pid: canvas._id })
-                  }
-                  style={snapshotStyles.icon}
+              {canvas.comments_off === false && (
+                <View
+                  style={[
+                    globalStyles.row,
+                    { justifyContent: "space-between" },
+                  ]}
                 >
-                  <MaterialCommunityIcons
-                    name="comment-outline"
-                    color={colors.primaryText}
-                    size={26}
-                  />
-                </TouchableOpacity>
-              </View>
+                  <Text style={snapshotStyles.buttonText}>
+                    {comments.length >= 1000
+                      ? comments.length / 1000 + "k"
+                      : comments.length}
+                  </Text>
+                  <TouchableOpacity
+                    onPress={() =>
+                      navigation.push("Comments", { pid: canvas._id })
+                    }
+                    style={snapshotStyles.icon}
+                  >
+                    <MaterialCommunityIcons
+                      name="comment-outline"
+                      color={colors.primaryText}
+                      size={26}
+                    />
+                  </TouchableOpacity>
+                </View>
+              )}
             </View>
           </View>
         </View>
@@ -177,8 +182,10 @@ export default CanvasSnapshot;
 
 const snapshotStyles = StyleSheet.create({
   container: {
-    alignSelf: "stretch",
+    alignSelf: "center",
     height: "auto",
+    width: "100%",
+    maxWidth: 470,
     backgroundColor: colors.primary,
     borderRadius: 20,
     padding: 10,
@@ -186,22 +193,14 @@ const snapshotStyles = StyleSheet.create({
   },
   canvas: {
     height: 450,
+    width: "100%",
+    maxWidth: 470,
     borderRadius: 20,
     marginBottom: 5,
   },
   viewMoreButton: {
     color: colors.primaryText,
     fontWeight: "bold",
-  },
-  profilePic: {
-    height: 40,
-    width: 40,
-    borderRadius: 100,
-  },
-  creator: {
-    fontWeight: "bold",
-    fontSize: 16,
-    marginLeft: 10,
   },
   icon: {
     paddingHorizontal: 5,

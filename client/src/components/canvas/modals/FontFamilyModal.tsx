@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react";
+import React, { FC, Fragment, useState } from "react";
 import {
   ScrollView,
   StyleSheet,
@@ -11,6 +11,7 @@ import { useDispatch } from "react-redux";
 import { fontFamilies } from "../../../constants/attributes";
 import { update_element_attributes } from "../../../store/canvas/canvasSlice";
 import { toggle_modal } from "../../../store/modal/modalSlice";
+import { colors } from "../../../styles/base";
 import { globalStyles } from "../../../styles/global";
 import { CanvasElementType } from "../../../types";
 import BottomSheet from "../../common/BottomSheet";
@@ -22,6 +23,11 @@ interface Props {
 const FontFamilyModal: FC<Props> = ({ currentElement }) => {
   const dispatch = useDispatch();
   const [showModal, setShowModal] = useState(false);
+
+  const handleShowModal = () => {
+    setShowModal(!showModal);
+    dispatch(toggle_modal(!showModal));
+  };
 
   const updateFontFamily = (value: string) => {
     dispatch(
@@ -36,36 +42,54 @@ const FontFamilyModal: FC<Props> = ({ currentElement }) => {
     <View>
       <TouchableOpacity
         style={globalStyles.detailedButton}
-        onPress={() => {
-          setShowModal(true);
-          dispatch(toggle_modal(true));
-        }}
+        onPress={handleShowModal}
       >
         <MaterialCommunityIcons name={"format-font"} size={32} />
         <Text>Font Family</Text>
       </TouchableOpacity>
       <BottomSheet showModal={showModal} setShowModal={setShowModal}>
-        <ScrollView>
-          <View style={fontFamilyModalStyles.fontFamilyContainer}>
-            {fontFamilies.map((font, index) => {
-              return (
-                <TouchableOpacity
-                  key={index}
-                  onPress={() => updateFontFamily(font.value)}
-                >
-                  <Text
-                    style={[
-                      fontFamilyModalStyles.fontButton,
-                      { fontFamily: font.value },
-                    ]}
+        <Fragment>
+          <ScrollView>
+            <View style={fontFamilyModalStyles.fontFamilyContainer}>
+              {fontFamilies.map((font, index) => {
+                return (
+                  <TouchableOpacity
+                    key={index}
+                    onPress={() => updateFontFamily(font.value)}
                   >
-                    {font.label}
-                  </Text>
-                </TouchableOpacity>
-              );
-            })}
-          </View>
-        </ScrollView>
+                    <Text
+                      style={[
+                        fontFamilyModalStyles.fontButton,
+                        { fontFamily: font.value },
+                      ]}
+                    >
+                      {font.label}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+          </ScrollView>
+          <TouchableOpacity
+            onPress={handleShowModal}
+            style={[
+              globalStyles.detailedButton,
+              globalStyles.listButton,
+              { marginTop: 10, backgroundColor: colors.accent },
+            ]}
+          >
+            <MaterialCommunityIcons
+              name="close-thick"
+              color={colors.whiteText}
+              size={26}
+            />
+            <Text
+              style={[globalStyles.listButtonText, { color: colors.whiteText }]}
+            >
+              Close
+            </Text>
+          </TouchableOpacity>
+        </Fragment>
       </BottomSheet>
     </View>
   );
