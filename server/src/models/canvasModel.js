@@ -15,6 +15,10 @@ const canvasSchema = mongoose.Schema(
       type: Array,
       default: [],
     },
+    comments_off: {
+      type: Boolean,
+      default: false,
+    },
     screenshot: {
       type: String,
       required: true,
@@ -37,9 +41,8 @@ const canvasSchema = mongoose.Schema(
 
 canvasSchema.statics.list = async function (query) {
   try {
-    console.log({ query });
     const canvases = await this.find(query).exec();
-    console.log({ canvases });
+
     return canvases;
   } catch (err) {
     throw console.error({ err });

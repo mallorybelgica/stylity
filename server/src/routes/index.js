@@ -4,6 +4,7 @@ const canvasRoutes = require("./canvasRoutes");
 const commentRoutes = require("./commentRoutes");
 const userRoutes = require("./userRoutes");
 const assetRoutes = require("./assetRoutes");
+const followerRoutes = require("./followerRoutes");
 
 const router = express.Router();
 
@@ -14,5 +15,6 @@ router.use("/canvases", canvasRoutes);
 router.use("/comments", commentRoutes);
 router.use("/users", userRoutes);
 router.use("/assets", assetRoutes);
+router.use("/followers", followerRoutes);
 
 module.exports = router;
