@@ -25,6 +25,7 @@
     "expo-font": "~10.2.0",
     "expo-image-picker": "~13.3.1",
     "expo-status-bar": "~1.4.0",
+    "expo-updates": "~0.14.6",
     "form-data": "^4.0.0",
     "metro-react-native-babel-preset": "^0.72.1",
     "query-string": "^7.1.1",
@@ -57,8 +58,8 @@
   },
   "peerDependencies": {
     "react-native": "*",
-    "react-native-vector-icons": "*",
-    "react-native-paper": "*"
+    "react-native-paper": "*",
+    "react-native-vector-icons": "*"
   },
   "private": true
 }

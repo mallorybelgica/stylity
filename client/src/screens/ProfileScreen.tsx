@@ -119,28 +119,10 @@ const ProfileScreen: FC<Props> = (props) => {
   };
 
   useEffect(() => {
-    if (profileUserId) {
-      getProfileData();
-      getFollowerList();
-      getFollowingList();
-    }
+    getProfileData();
+    getFollowerList();
+    getFollowingList();
   }, [profileUserId, reloadKey]);
-
-  useEffect(() => {
-    const unsubscribe = navigation.addListener("focus", () => {
-      setIsProfileLoading(true);
-      setIsFollowersLoading(true);
-      setIsFollowingLoading(true);
-
-      if (profileUserId) {
-        getProfileData();
-        getFollowerList();
-        getFollowingList();
-      }
-    });
-
-    return unsubscribe;
-  }, []);
 
   if (isProfileLoading || isFollowingLoading || isFollowersLoading) {
     return <ActivityLoader />;
