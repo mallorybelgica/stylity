@@ -16,15 +16,20 @@ exports.register = async (req, res, next) => {
       createdAt: new Date(),
     }).save();
 
-    const activationToken = await user.getActivationToken(ROLES.USER);
+    const token = await user.createToken();
+    const authUser = await user.transform();
 
-    return res.json({
-      activationToken,
-      activationLink: `https://${req.get(
-        "host"
-      )}/v1/auth/activate?token=${activationToken}`,
-      user,
-    });
+    return res.json({ authUser, token });
+
+    // const activationToken = await user.getActivationToken(ROLES.USER);
+
+    // return res.json({
+    //   activationToken,
+    //   activationLink: `https://${req.get(
+    //     "host"
+    //   )}/v1/auth/activate?token=${activationToken}`,
+    //   user,
+    // });
   } catch (err) {
     return next(err);
   }
