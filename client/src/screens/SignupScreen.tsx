@@ -6,6 +6,7 @@ import { useDispatch } from "react-redux";
 import StyledButton from "../components/common/StyledButton";
 import StyledTextInput from "../components/common/StyledTextInput";
 import { register } from "../services/auth";
+import { sign_in } from "../store/auth/authSlice";
 import { user } from "../store/selectors";
 import { get_current_user } from "../store/users/userSlice";
 import { colors } from "../styles/base";
@@ -13,10 +14,9 @@ import { globalStyles } from "../styles/global";
 
 interface Props {
   navigation: StackNavigationProp<ParamListBase>;
-  setAuthed: SetStateAction<any>;
 }
 
-const SignupScreen: FC<Props> = ({ setAuthed, navigation }) => {
+const SignupScreen: FC<Props> = ({ navigation }) => {
   const dispatch = useDispatch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -24,16 +24,15 @@ const SignupScreen: FC<Props> = ({ setAuthed, navigation }) => {
   const [fullName, setFullName] = useState("");
 
   const handleSignup = async () => {
-    const newUser = await register({
+    const res: any = await register({
       email,
       password,
       display_name: displayName,
       full_name: fullName,
     });
 
-    if (newUser) {
-      setAuthed(true);
-      dispatch(get_current_user(user));
+    if (res) {
+      dispatch(sign_in(res.AUTH));
     }
   };
 

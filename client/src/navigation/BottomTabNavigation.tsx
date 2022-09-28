@@ -10,13 +10,9 @@ import {
   ProfileStackNavigator,
 } from "./StackNavigator";
 
-interface Props {
-  setAuthed: SetStateAction<any>;
-}
-
 const Tab = createBottomTabNavigator();
 
-const BottomTabNavigator: FC<Props> = ({ setAuthed }) => {
+const BottomTabNavigator = () => {
   return (
     <Tab.Navigator
       sceneContainerStyle={{ backgroundColor: "#fff" }}
@@ -44,7 +40,7 @@ const BottomTabNavigator: FC<Props> = ({ setAuthed }) => {
         }}
         name="Home"
       >
-        {(props) => <MainStackNavigator setAuthed={setAuthed} {...props} />}
+        {(props) => <MainStackNavigator />}
       </Tab.Screen>
       <Tab.Screen
         options={{

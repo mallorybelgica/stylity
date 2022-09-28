@@ -104,7 +104,7 @@ const Comment: FC<Props> = ({ comment, reload }) => {
       overshootLeft={false}
       onSwipeableOpen={handleDeleteComment}
     >
-      <RectButton style={commentStyles.container}>
+      <View style={commentStyles.container}>
         {author && (
           <View style={commentStyles.commentDetails}>
             {author?.profile_pic ? (
@@ -156,7 +156,7 @@ const Comment: FC<Props> = ({ comment, reload }) => {
             />
           )}
         </TouchableOpacity>
-      </RectButton>
+      </View>
     </Swipeable>
   );
 };

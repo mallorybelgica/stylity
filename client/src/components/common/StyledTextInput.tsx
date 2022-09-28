@@ -25,20 +25,18 @@ const StyledTextInput: FC<Props> = ({
 }) => {
   return (
     <View style={{ marginVertical: 5, paddingVertical: 10 }}>
-      <Text
-        style={[
-          globalStyles.headerText,
-          {
-            top: 0,
-            left: 25,
-            backgroundColor: "#fff",
-            position: "absolute",
-            paddingHorizontal: 5,
-          },
-        ]}
+      <View
+        style={{
+          top: 0,
+          left: 25,
+          backgroundColor: "#fff",
+          position: "absolute",
+          paddingHorizontal: 5,
+          zIndex: 10,
+        }}
       >
-        {label}
-      </Text>
+        <Text style={globalStyles.headerText}>{label}</Text>
+      </View>
       <TextInput
         onChangeText={(value) => setState(value)}
         value={value}
@@ -61,5 +59,6 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: colors.lightText,
     borderRadius: 50,
+    fontSize: 16,
   },
 });

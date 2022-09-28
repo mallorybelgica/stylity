@@ -16,21 +16,23 @@ const HomeFeedScreen: FC<Props> = (props) => {
   const { currentUser } = useSelector(user);
   const [homeFeedCanvases, setHomeFeedCanvases] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-
+  console.log({ currentUser, homeFeedCanvases, isLoading });
   const getHomeFeedCanvases = async () => {
-    const res = await getCanvases({ user_id: currentUser?.following });
+    try {
+      const res = await getCanvases({ user_id: currentUser.following });
 
-    if (res) {
-      setHomeFeedCanvases(res.data);
-      setIsLoading(false);
+      if (res) {
+        setHomeFeedCanvases(res.data);
+        setIsLoading(false);
+      }
+    } catch (err) {
+      console.log({ err });
     }
   };
 
   useEffect(() => {
-    if (currentUser._id) {
-      getHomeFeedCanvases();
-    }
-  }, [currentUser]);
+    getHomeFeedCanvases();
+  }, []);
 
   if (isLoading) {
     return <ActivityLoader />;

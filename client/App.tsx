@@ -4,19 +4,20 @@ import { Provider } from "react-redux";
 import { NavigationContainer } from "@react-navigation/native";
 import { Animated, Platform } from "react-native";
 import { store } from "./src/store/store";
-import { getAuthUser, isAuthenticated } from "./src/services/auth";
+import { getAuthUser, getToken, isAuthenticated } from "./src/services/auth";
 import { navigationRef } from "./src/navigation/RouteNavigation";
 
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { globalStyles } from "./src/styles/global";
 import { useDispatch } from "react-redux";
-import { get_current_user } from "./src/store/users/userSlice";
+import { currentUser, get_current_user } from "./src/store/users/userSlice";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { PublicStackNavigator } from "./src/navigation/StackNavigator";
 import { getUser } from "./src/services/user";
 import BottomTabNavigator from "./src/navigation/BottomTabNavigation";
 import { useSelector } from "react-redux";
-import { modal } from "./src/store/selectors";
+import { auth, modal, user } from "./src/store/selectors";
+import { restore_token } from "./src/store/auth/authSlice";
 
 export default function AppWrapper() {
   return (
@@ -30,19 +31,27 @@ export default function AppWrapper() {
 
 function App() {
   const dispatch = useDispatch();
+  const { userToken } = useSelector(auth);
   const { isOpen } = useSelector(modal);
   const fadeAnimation = new Animated.Value(0);
-  const [authed, setAuthed] = useState<boolean | null>(null);
-  const handleAuthentication = async () => setAuthed(await isAuthenticated());
-  const handleAuthUser = async () => {
-    const res = await getAuthUser();
-    if (res) {
-      const authUserId = JSON.parse(res);
-      const authUser = await getUser(authUserId);
 
-      if (authUserId) {
-        dispatch(get_current_user(authUser.data));
+  const handleAuthentication = async () => {
+    let userToken: string | null;
+    let user: any;
+    try {
+      const res: any = await getAuthUser();
+
+      if (res) {
+        user = JSON.parse(res);
+        userToken = await getToken();
+
+        if (userToken && user) {
+          dispatch(restore_token({ userToken }));
+          dispatch(get_current_user(user));
+        }
       }
+    } catch (err) {
+      console.log({ err });
     }
   };
 
@@ -57,23 +66,13 @@ function App() {
   }, [isOpen]);
 
   useEffect(() => {
-    if (authed) {
-      handleAuthUser();
-    }
-  }, [authed]);
-
-  useEffect(() => {
     handleAuthentication();
   }, []);
 
   return (
     <GestureHandlerRootView style={globalStyles.container}>
       <NavigationContainer ref={navigationRef}>
-        {authed ? (
-          <BottomTabNavigator setAuthed={setAuthed} />
-        ) : (
-          <PublicStackNavigator setAuthed={setAuthed} />
-        )}
+        {userToken ? <BottomTabNavigator /> : <PublicStackNavigator />}
         {isOpen && (
           <Animated.View
             style={{

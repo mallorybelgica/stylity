@@ -25,10 +25,6 @@ import { currentUser } from "../store/users/userSlice";
 
 const Stack = createStackNavigator<RootStackParamsList>();
 
-interface Props {
-  setAuthed: SetStateAction<any>;
-}
-
 const ProfileStackNavigator = () => {
   const { currentUser } = useSelector(user);
   return (
@@ -147,7 +143,7 @@ const CanvasStackNavigator = () => {
   );
 };
 
-const MainStackNavigator: FC<Props> = ({ setAuthed }) => {
+const MainStackNavigator = () => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamsList>>();
   const currentScreen = navigationRef.current?.getCurrentRoute()?.name;
 
@@ -177,7 +173,7 @@ const MainStackNavigator: FC<Props> = ({ setAuthed }) => {
             </TouchableOpacity>
           ),
         }}
-        name="Home"
+        name="HomeFeed"
         component={HomeFeedScreen}
       />
       <Stack.Screen
@@ -241,13 +237,13 @@ const MainStackNavigator: FC<Props> = ({ setAuthed }) => {
         }}
         name="Settings"
       >
-        {(props) => <UserSettingsScreen setAuthed={setAuthed} {...props} />}
+        {(props) => <UserSettingsScreen />}
       </Stack.Screen>
     </Stack.Navigator>
   );
 };
 
-const PublicStackNavigator: FC<Props> = ({ setAuthed }) => {
+const PublicStackNavigator = () => {
   return (
     <Stack.Navigator screenOptions={{ cardStyle: { backgroundColor: "#fff" } }}>
       <Stack.Screen
@@ -264,7 +260,7 @@ const PublicStackNavigator: FC<Props> = ({ setAuthed }) => {
           ),
         }}
       >
-        {(props) => <LoginScreen setAuthed={setAuthed} {...props} />}
+        {(props) => <LoginScreen {...props} />}
       </Stack.Screen>
       <Stack.Screen
         name="Signup"
@@ -275,10 +271,10 @@ const PublicStackNavigator: FC<Props> = ({ setAuthed }) => {
           headerTintColor: colors.whiteText,
         }}
       >
-        {(props) => <SignupScreen setAuthed={setAuthed} {...props} />}
+        {(props) => <SignupScreen {...props} />}
       </Stack.Screen>
       <Stack.Screen name="Home">
-        {(props) => <MainStackNavigator setAuthed={setAuthed} {...props} />}
+        {(props) => <MainStackNavigator />}
       </Stack.Screen>
     </Stack.Navigator>
   );

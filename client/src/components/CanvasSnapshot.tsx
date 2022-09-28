@@ -108,7 +108,9 @@ const CanvasSnapshot: FC<Props> = (props) => {
                 />
               ) : (
                 <Image
-                  source={{ uri: creator?.profile_pic }}
+                  source={{
+                    uri: `${REACT_APP_AWS_URL}/${creator?.profile_pic}.jpeg`,
+                  }}
                   style={globalStyles.profilePic}
                 />
               )}

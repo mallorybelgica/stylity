@@ -35,6 +35,12 @@ export const userSlice = createSlice({
         isLoading: false,
       };
     },
+    update_current_user: (state, action) => {
+      state.currentUser = { ...state.currentUser, ...action.payload };
+    },
+    logout_current_user: (state) => {
+      state.currentUser = initialState.currentUser;
+    },
     user_error: (state, action) => {
       return {
         ...state,
@@ -45,7 +51,12 @@ export const userSlice = createSlice({
   },
 });
 
-export const { get_current_user, user_error } = userSlice.actions;
+export const {
+  get_current_user,
+  update_current_user,
+  logout_current_user,
+  user_error,
+} = userSlice.actions;
 
 export const currentUser = (state: RootState) => state.user.currentUser;
 

@@ -145,14 +145,15 @@ const ProfileScreen: FC<Props> = (props) => {
   if (isProfileLoading || isFollowingLoading || isFollowersLoading) {
     return <ActivityLoader />;
   }
-
   return (
     <SafeAreaView style={profileStyles.container}>
       {profileUser && (
         <View>
           {profileUser.profile_pic ? (
             <Image
-              source={{ uri: profileUser.profile_pic }}
+              source={{
+                uri: `${REACT_APP_AWS_URL}/${profileUser.profile_pic}.jpeg`,
+              }}
               style={[globalStyles.profilePic, { alignSelf: "center" }]}
             />
           ) : (

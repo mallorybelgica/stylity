@@ -1,5 +1,10 @@
 import { SetStateAction } from "react";
 
+export type AuthType = {
+  userToken: string;
+  isSignout: boolean;
+};
+
 export type AttributesType = {
   dimensions?: { width: number; height: number };
   position: { left: number; top: number };
@@ -66,6 +71,7 @@ export type FollowerType = {
 export type RootStackParamsList = {
   Profile: { profileUserId: string; name: string };
   Home: undefined;
+  HomeFeed: undefined;
   EditCanvas: { canvasId: string };
   Canvas: { canvasId: string };
   Comments: { pid: string };
