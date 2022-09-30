@@ -1,3 +1,4 @@
+const httpStatus = require("http-status");
 const User = require("../models/userModel");
 const { ROLES } = require("../utils/global");
 
@@ -62,18 +63,21 @@ exports.login = async (req, res, next) => {
 
         return res.json({ authUser, token });
       } else {
-        throw error({
+        return res.status(401).json({
           status: httpStatus.UNAUTHORIZED,
-          message: "Invalid password",
+          message: "The password you entered is incorrect.",
         });
       }
     } else {
-      throw error({
+      return res.status(401).json({
         status: httpStatus.UNAUTHORIZED,
-        message: "Invalid email - user does not exist",
+        message: "The email you entered does not exist.",
       });
     }
   } catch (err) {
-    return next(err);
+    return res.status(401).json({
+      status: httpStatus.UNAUTHORIZED,
+      message: "Unauthorized",
+    });
   }
 };
