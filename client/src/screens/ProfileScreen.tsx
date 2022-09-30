@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   View,
   Dimensions,
+  ScrollView,
 } from "react-native";
 import { useSelector } from "react-redux";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
@@ -48,40 +49,23 @@ const ProfileScreen: FC<Props> = (props) => {
   const [followerList, setFollowerList] = useState<Array<FollowerType>>([]);
   const [reloadKey, setReloadKey] = useState(0);
 
-  const [isProfileLoading, setIsProfileLoading] = useState(true);
-  const [isFollowersLoading, setIsFollowersLoading] = useState(true);
-  const [isFollowingLoading, setIsFollowingLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isError, setIsError] = useState(false);
 
   const getProfileData = async () => {
     const user = await getUser(profileUserId);
 
     if (user) {
       const canvases = await getCanvases({ user_id: user.data._id });
+      const followerList = await getFollowList({ followee_id: user.data._id });
+      const followingList = await getFollowList({ follower_id: user.data._id });
 
-      if (canvases) {
-        setProfileUser(user.data);
-        setProfileCanvases(canvases.data);
-        setIsProfileLoading(false);
-      }
+      setProfileUser(user.data);
+      setProfileCanvases(canvases.data);
+      setFollowerList(followerList.data);
+      setFollowingList(followingList.data);
     }
-  };
-
-  const getFollowerList = async () => {
-    const res = await getFollowList({ followee_id: profileUserId });
-
-    if (res) {
-      setFollowerList(res.data);
-      setIsFollowersLoading(false);
-    }
-  };
-
-  const getFollowingList = async () => {
-    const res = await getFollowList({ follower_id: profileUserId });
-
-    if (res) {
-      setFollowingList(res.data);
-      setIsFollowingLoading(false);
-    }
+    setIsLoading(false);
   };
 
   const reload = useCallback(() => {
@@ -120,11 +104,9 @@ const ProfileScreen: FC<Props> = (props) => {
 
   useEffect(() => {
     getProfileData();
-    getFollowerList();
-    getFollowingList();
   }, [profileUserId, reloadKey]);
 
-  if (isProfileLoading || isFollowingLoading || isFollowersLoading) {
+  if (isLoading) {
     return <ActivityLoader />;
   }
   return (
@@ -203,37 +185,39 @@ const ProfileScreen: FC<Props> = (props) => {
           </View>
         </View>
       )}
-      <View
-        style={[
-          profileStyles.canvasesContainer,
-          profileCanvases.length > 0
-            ? profileStyles.populatedProfile
-            : profileStyles.emptyProfile,
-        ]}
-      >
-        {profileCanvases.length > 0 ? (
-          profileCanvases.map((canvas: CanvasType, index: number) => {
-            return (
-              <View style={profileStyles.canvas} key={index}>
-                <TouchableOpacity
-                  onPress={() =>
-                    navigation.push("Canvas", { canvasId: canvas._id })
-                  }
-                >
-                  <Image
-                    source={{
-                      uri: `${REACT_APP_AWS_URL}/${canvas.screenshot}.jpeg`,
-                    }}
-                    style={profileStyles.screenshot}
-                  />
-                </TouchableOpacity>
-              </View>
-            );
-          })
-        ) : (
-          <Text style={profileStyles.emptyCanvas}>No Canvases Yet.</Text>
-        )}
-      </View>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <View
+          style={[
+            profileStyles.canvasesContainer,
+            profileCanvases.length > 0
+              ? profileStyles.populatedProfile
+              : profileStyles.emptyProfile,
+          ]}
+        >
+          {profileCanvases.length > 0 ? (
+            profileCanvases.map((canvas: CanvasType, index: number) => {
+              return (
+                <View style={profileStyles.canvas} key={index}>
+                  <TouchableOpacity
+                    onPress={() =>
+                      navigation.push("Canvas", { canvasId: canvas._id })
+                    }
+                  >
+                    <Image
+                      source={{
+                        uri: `${REACT_APP_AWS_URL}/${canvas.screenshot}.jpeg`,
+                      }}
+                      style={profileStyles.screenshot}
+                    />
+                  </TouchableOpacity>
+                </View>
+              );
+            })
+          ) : (
+            <Text style={profileStyles.emptyCanvas}>No Canvases Yet.</Text>
+          )}
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };

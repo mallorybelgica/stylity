@@ -18,7 +18,10 @@ const StyledSnackbar: FC<Props> = ({
   return (
     <View style={snackbarStyles.container}>
       <Snackbar
-        wrapperStyle={{ top: 100 }}
+        wrapperStyle={{
+          bottom: 10,
+          zIndex: 10,
+        }}
         duration={5000}
         visible={showSnackbar}
         onDismiss={onDismissSnackbar}

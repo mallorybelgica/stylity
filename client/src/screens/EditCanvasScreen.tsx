@@ -37,10 +37,10 @@ const EditCanvasScreen: FC<Props> = (props) => {
   >();
 
   const getExistingCanvas = async () => {
-    const res = await getCanvas(canvasId);
+    const canvas = await getCanvas(canvasId);
 
-    if (res) {
-      dispatch(update_canvas(res.data));
+    if (canvas) {
+      dispatch(update_canvas(canvas.data));
     }
   };
 
@@ -235,12 +235,12 @@ const EditCanvasScreen: FC<Props> = (props) => {
           setCurrentElement={setCurrentElement}
         />
       </View>
-      {/* <StyledSnackbar
+      <StyledSnackbar
         showSnackbar={showSnackbar}
         setShowSnackbar={setShowSnackbar}
       >
         <Text>Caption updated successfully</Text>
-      </StyledSnackbar> */}
+      </StyledSnackbar>
     </View>
   );
 };

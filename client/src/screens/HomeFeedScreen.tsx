@@ -1,3 +1,4 @@
+import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import React, { FC, useEffect, useState } from "react";
 import { ScrollView, StyleSheet, Text } from "react-native";
@@ -13,22 +14,33 @@ interface Props {
 }
 
 const HomeFeedScreen: FC<Props> = (props) => {
+  const navigation = useNavigation<StackNavigationProp<RootStackParamsList>>();
   const { currentUser } = useSelector(user);
   const [homeFeedCanvases, setHomeFeedCanvases] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  console.log({ currentUser, homeFeedCanvases, isLoading });
+
   const getHomeFeedCanvases = async () => {
     try {
-      const res = await getCanvases({ user_id: currentUser.following });
+      const canvases = await getCanvases({ user_id: currentUser.following });
 
-      if (res) {
-        setHomeFeedCanvases(res.data);
-        setIsLoading(false);
-      }
+      setHomeFeedCanvases(canvases.data);
+      setIsLoading(false);
     } catch (err) {
       console.log({ err });
     }
   };
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", () => {
+      setIsLoading(true);
+
+      if (currentUser._id) {
+        getHomeFeedCanvases();
+      }
+    });
+
+    return unsubscribe;
+  }, []);
 
   useEffect(() => {
     getHomeFeedCanvases();

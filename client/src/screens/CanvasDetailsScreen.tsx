@@ -15,7 +15,7 @@ interface Props {
 const CanvasDetailsScreen: FC<Props> = (props) => {
   const { route, navigation } = props;
   const { canvasId } = route.params;
-  const [canvasIsLoading, setCanvasIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [canvas, setCanvas] = useState();
   const [reloadKey, setReloadKey] = useState(0);
 
@@ -24,33 +24,19 @@ const CanvasDetailsScreen: FC<Props> = (props) => {
 
     if (res) {
       setCanvas(res.data);
-      setCanvasIsLoading(false);
+      setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    if (canvasId) {
-      getCanvasById();
-    }
-  }, [reloadKey, canvasId]);
+    getCanvasById();
+  }, [reloadKey]);
 
   const reload = useCallback(() => {
     setReloadKey((prevReloadKey) => prevReloadKey + 1);
   }, []);
 
-  useEffect(() => {
-    const unsubscribe = navigation.addListener("focus", () => {
-      setCanvasIsLoading(true);
-
-      if (canvasId) {
-        getCanvasById();
-      }
-    });
-
-    return unsubscribe;
-  }, []);
-
-  if (canvasIsLoading) {
+  if (isLoading) {
     return <ActivityLoader />;
   }
 

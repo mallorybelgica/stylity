@@ -1,5 +1,11 @@
 import React, { FC, SetStateAction, useEffect, useState } from "react";
-import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  Text,
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Keyboard,
+} from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import StyledTextInput from "../components/common/StyledTextInput";
 import { login } from "../services/auth";
@@ -11,6 +17,7 @@ import { globalStyles } from "../styles/global";
 import { useSelector } from "react-redux";
 import { user } from "../store/selectors";
 import { sign_in } from "../store/auth/authSlice";
+import StyledSnackbar from "../components/common/StyledSnackbar";
 
 interface Props {
   navigation: StackNavigationProp<ParamListBase>;
@@ -20,54 +27,64 @@ const LoginScreen: FC<Props> = ({ navigation }) => {
   const dispatch = useDispatch();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleLogin = async () => {
     const res: any = await login({ email, password });
-
-    if (res) {
+    if (res.status === 401) {
+      setErrorMessage(res.errorMessage);
+      setShowError(true);
+    } else {
       dispatch(sign_in(res.AUTH));
     }
+    Keyboard.dismiss();
   };
 
   return (
     <View style={loginStyles.container}>
-      <StyledTextInput
-        label="Email"
-        setState={setEmail}
-        value={email}
-        keyboardType="email-address"
-        autoCapitalize={"none"}
-        textContentType={"emailAddress"}
-      />
-      <StyledTextInput
-        label="Password"
-        setState={setPassword}
-        value={password}
-        secureTextEntry={true}
-        autoCapitalize={"none"}
-        textContentType={"newPassword"}
-      />
-      <StyledButton
-        title="Login"
-        bgColor={colors.accent}
-        titleColor={colors.whiteText}
-        customButtonStyles={{
-          height: 60,
-          justifyContent: "center",
-          marginHorizontal: 0,
-          marginVertical: 5,
-        }}
-        customTitleStyles={{ fontSize: 16 }}
-        handler={handleLogin}
-      />
-      <View style={loginStyles.signupContainer}>
-        <Text style={globalStyles.text}>Don't have an account?</Text>
-        <TouchableOpacity onPress={() => navigation.navigate("Signup")}>
-          <Text style={[globalStyles.headerText, { marginHorizontal: 5 }]}>
-            Sign Up
-          </Text>
-        </TouchableOpacity>
+      <View>
+        <StyledTextInput
+          label="Email"
+          setState={setEmail}
+          value={email}
+          keyboardType="email-address"
+          autoCapitalize={"none"}
+          textContentType={"emailAddress"}
+        />
+        <StyledTextInput
+          label="Password"
+          setState={setPassword}
+          value={password}
+          secureTextEntry={true}
+          autoCapitalize={"none"}
+          textContentType={"newPassword"}
+        />
+        <StyledButton
+          title="Login"
+          bgColor={colors.accent}
+          titleColor={colors.whiteText}
+          customButtonStyles={{
+            height: 60,
+            justifyContent: "center",
+            marginHorizontal: 0,
+            marginVertical: 5,
+          }}
+          customTitleStyles={{ fontSize: 16 }}
+          handler={handleLogin}
+        />
+        <View style={loginStyles.signupContainer}>
+          <Text style={globalStyles.text}>Don't have an account?</Text>
+          <TouchableOpacity onPress={() => navigation.navigate("Signup")}>
+            <Text style={[globalStyles.headerText, { marginHorizontal: 5 }]}>
+              Sign Up
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
+      <StyledSnackbar showSnackbar={showError} setShowSnackbar={setShowError}>
+        <Text style={globalStyles.text}>{errorMessage}</Text>
+      </StyledSnackbar>
     </View>
   );
 };
@@ -76,7 +93,9 @@ export default LoginScreen;
 
 const loginStyles = StyleSheet.create({
   container: {
+    flex: 1,
     padding: 10,
+    justifyContent: "space-between",
   },
   signupContainer: {
     marginVertical: 5,

@@ -28,18 +28,15 @@ const CanvasSnapshot: FC<Props> = (props) => {
   const [likes, setLikes] = useState<Array<string>>([]);
   const [viewMore, setViewMore] = useState(false);
 
-  const getCommentsByCanvas = async () => {
-    const res = await getComments({ pid: canvas._id });
+  const getCanvasDetails = async () => {
+    try {
+      const comments = await getComments({ pid: canvas._id });
+      const creator = await getUser(canvas.user_id);
 
-    if (res) {
-      setComments(res.data);
-    }
-  };
-
-  const getCanvasCreator = async () => {
-    const res = await getUser(canvas.user_id);
-    if (res) {
-      setCreator(res.data);
+      setComments(comments.data);
+      setCreator(creator.data);
+    } catch (err) {
+      console.log({ err });
     }
   };
 
@@ -57,12 +54,9 @@ const CanvasSnapshot: FC<Props> = (props) => {
   };
 
   useEffect(() => {
-    if (canvas._id) {
-      getCommentsByCanvas();
-      getCanvasCreator();
-      setLikes(canvas.likes);
-    }
-  }, [canvas]);
+    getCanvasDetails();
+    setLikes(canvas.likes);
+  }, []);
 
   return (
     <View style={snapshotStyles.container}>

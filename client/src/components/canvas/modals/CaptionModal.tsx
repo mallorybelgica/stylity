@@ -21,7 +21,6 @@ import { canvas } from "../../../store/selectors";
 import { colors } from "../../../styles/base";
 import { globalStyles } from "../../../styles/global";
 import BottomSheet from "../../common/BottomSheet";
-import StyledSnackbar from "../../common/StyledSnackbar";
 
 interface Props {
   setShowSnackbar: Dispatch<SetStateAction<boolean>>;

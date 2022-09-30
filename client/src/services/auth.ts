@@ -1,6 +1,7 @@
 import axios from "../config/axios";
 import { decodeToken, isExpired } from "react-jwt";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { AxiosError, AxiosResponse } from "axios";
 
 const AUTH_URL = "v1/auth";
 
@@ -40,9 +41,12 @@ export const login = async (data: object) => {
     AsyncStorage.setItem("@stylity_token", AUTH);
     AsyncStorage.setItem("@stylity_user", JSON.stringify(USER));
 
-    return { AUTH, USER };
-  } catch (err) {
-    return err;
+    return { status: res.status, AUTH, USER };
+  } catch (err: any) {
+    return {
+      status: err.response.data.status,
+      errorMessage: err.response.data.message,
+    };
   }
 };
 

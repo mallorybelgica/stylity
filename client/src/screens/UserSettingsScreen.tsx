@@ -1,4 +1,4 @@
-import React, { FC, SetStateAction, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Button,
   Image,
@@ -9,8 +9,6 @@ import {
 import StyledTextInput from "../components/common/StyledTextInput";
 import { logout } from "../services/auth";
 import { imageUploader } from "../helpers/utils";
-import { RouteProp } from "@react-navigation/native";
-import { RootStackParamsList, UserType } from "../types";
 import { useSelector } from "react-redux";
 import { user } from "../store/selectors";
 import { REACT_APP_AWS_URL } from "@env";
@@ -18,7 +16,6 @@ import { globalStyles } from "../styles/global";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { updateUser } from "../services/user";
 import {
-  logout_current_user,
   update_current_user,
 } from "../store/users/userSlice";
 import { useDispatch } from "react-redux";

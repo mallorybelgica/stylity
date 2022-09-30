@@ -1,45 +1,52 @@
-import React, { FC, useState } from "react";
+import React, { Dispatch, FC, SetStateAction, useState } from "react";
 import {
   View,
   Text,
   TextInput,
   StyleSheet,
   TouchableHighlight,
+  Keyboard,
 } from "react-native";
 import { useSelector } from "react-redux";
 import { createComment } from "../../services/comments";
 import { user } from "../../store/selectors";
 import { colors } from "../../styles/base";
 import { globalStyles } from "../../styles/global";
+import { CommentType } from "../../types";
 
 interface Props {
   pid: string;
-  reload: any;
+  comments: Array<any>;
+  setComments: Dispatch<SetStateAction<any>>;
 }
 
-const CommentInput: FC<Props> = ({ pid, reload }) => {
+const CommentInput: FC<Props> = ({ pid, comments, setComments }) => {
   const { currentUser } = useSelector(user);
   const [comment, onChangeComment] = useState("");
-  const [newHeight, setNewHeight] = useState(1);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (comment === "") return;
-    createComment({ author_id: currentUser._id, pid, comment });
+    const res = await createComment({
+      author_id: currentUser._id,
+      pid,
+      comment,
+    });
+
+    if (res) {
+      setComments([...comments, res.comment]);
+    }
     onChangeComment("");
-    reload();
+    Keyboard.dismiss();
   };
 
   return (
     <View style={styles.container}>
       <TextInput
-        multiline={true}
+        multiline
         value={comment}
-        onContentSizeChange={(ev) => {
-          setNewHeight(ev.nativeEvent.contentSize.height);
-        }}
         onChangeText={onChangeComment}
         onSubmitEditing={handleSubmit}
-        style={[styles.input, { height: comment.length < 38 ? 40 : newHeight }]}
+        style={styles.input}
       />
       <TouchableHighlight onPress={handleSubmit} style={styles.button}>
         <Text style={[globalStyles.headerText, { color: colors.accent }]}>

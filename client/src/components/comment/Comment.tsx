@@ -23,10 +23,9 @@ import { CommentType, RootStackParamsList, UserType } from "../../types";
 
 interface Props {
   comment: CommentType;
-  reload: any;
 }
 
-const Comment: FC<Props> = ({ comment, reload }) => {
+const Comment: FC<Props> = ({ comment }) => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamsList>>();
   const swipeableRef = useRef<Swipeable>(null);
   const { currentUser } = useSelector(user);
@@ -48,7 +47,6 @@ const Comment: FC<Props> = ({ comment, reload }) => {
   const handleDeleteComment = () => {
     deleteComment(comment._id);
     closeSwipeable();
-    reload();
   };
 
   const toggleLike = () => {

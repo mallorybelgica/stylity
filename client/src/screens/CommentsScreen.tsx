@@ -12,7 +12,6 @@ interface Props {
 
 const CommentsScreen: FC<Props> = ({ route }) => {
   const { pid } = route.params;
-  const [reloadKey, setReloadKey] = useState(0);
   const [comments, setComments] = useState<Array<CommentType>>([]);
 
   const getCanvasComments = async () => {
@@ -25,18 +24,14 @@ const CommentsScreen: FC<Props> = ({ route }) => {
 
   useEffect(() => {
     getCanvasComments();
-  }, [reloadKey]);
-
-  const reload = useCallback(() => {
-    setReloadKey((prevReloadKey) => prevReloadKey + 1);
   }, []);
 
   return (
     <View>
-      <CommentInput pid={pid} reload={reload} />
+      <CommentInput pid={pid} comments={comments} setComments={setComments} />
       <ScrollView>
         {comments.map((comment, index) => {
-          return <Comment comment={comment} reload={reload} key={index} />;
+          return <Comment comment={comment} key={index} />;
         })}
       </ScrollView>
     </View>
