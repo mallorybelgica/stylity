@@ -18,6 +18,7 @@ import BottomTabNavigator from "./src/navigation/BottomTabNavigation";
 import { useSelector } from "react-redux";
 import { auth, modal, user } from "./src/store/selectors";
 import { restore_token } from "./src/store/auth/authSlice";
+import ActivityLoader from "./src/components/common/ActivityLoader";
 
 export default function AppWrapper() {
   return (
@@ -33,6 +34,7 @@ function App() {
   const dispatch = useDispatch();
   const { userToken } = useSelector(auth);
   const { isOpen } = useSelector(modal);
+  const [isLoading, setIsLoading] = useState(true);
   const fadeAnimation = new Animated.Value(0);
 
   const handleAuthentication = async () => {
@@ -48,6 +50,7 @@ function App() {
         if (userToken && user) {
           dispatch(restore_token({ userToken }));
           dispatch(get_current_user(user));
+          setIsLoading(false);
         }
       }
     } catch (err) {
@@ -68,6 +71,10 @@ function App() {
   useEffect(() => {
     handleAuthentication();
   }, []);
+
+  if (isLoading) {
+    return <ActivityLoader />;
+  }
 
   return (
     <GestureHandlerRootView style={globalStyles.container}>

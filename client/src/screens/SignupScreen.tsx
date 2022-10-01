@@ -1,14 +1,12 @@
 import { ParamListBase } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import React, { FC, SetStateAction, useState } from "react";
+import React, { FC, useState } from "react";
 import { Text, StyleSheet, View, TouchableOpacity } from "react-native";
 import { useDispatch } from "react-redux";
 import StyledButton from "../components/common/StyledButton";
 import StyledTextInput from "../components/common/StyledTextInput";
 import { register } from "../services/auth";
 import { sign_in } from "../store/auth/authSlice";
-import { user } from "../store/selectors";
-import { get_current_user } from "../store/users/userSlice";
 import { colors } from "../styles/base";
 import { globalStyles } from "../styles/global";
 

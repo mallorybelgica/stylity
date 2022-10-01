@@ -80,3 +80,25 @@ export const deleteUser = async (id: string) => {
     return err;
   }
 };
+
+export const updateUserPassword = async (id: string, data: object) => {
+  try {
+    const authenticated = await isAuthenticated();
+    const token = await getToken();
+
+    if (authenticated) {
+      const res = await axios.put(`${USER_URL}/${id}/password`, data, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log({ res });
+      return { status: res.status, data: res.data };
+    }
+  } catch (err: any) {
+    return {
+      status: err.response.data.status,
+      errorMessage: err.response.data.message,
+    };
+  }
+};

@@ -185,10 +185,13 @@ const ProfileScreen: FC<Props> = (props) => {
           </View>
         </View>
       )}
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView
+        style={profileStyles.canvasesContainer}
+        showsVerticalScrollIndicator={false}
+      >
         <View
           style={[
-            profileStyles.canvasesContainer,
+            { flexWrap: "wrap" },
             profileCanvases.length > 0
               ? profileStyles.populatedProfile
               : profileStyles.emptyProfile,
@@ -266,7 +269,6 @@ const profileStyles = StyleSheet.create({
     borderRadius: 10,
   },
   canvasesContainer: {
-    flexWrap: "wrap",
     flexGrow: 1,
     backgroundColor: colors.primary,
     padding: 5,

@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import CanvasSnapshot from "../components/CanvasSnapshot";
 import ActivityLoader from "../components/common/ActivityLoader";
 import { getCanvases } from "../services/canvas";
+import { getFollowList } from "../services/followers";
 import { user } from "../store/selectors";
 import { RootStackParamsList } from "../types";
 
@@ -21,7 +22,14 @@ const HomeFeedScreen: FC<Props> = (props) => {
 
   const getHomeFeedCanvases = async () => {
     try {
-      const canvases = await getCanvases({ user_id: currentUser.following });
+      const followingList = await getFollowList({
+        follower_id: currentUser._id,
+      });
+
+      const followee_ids = followingList.data.map(
+        (user: any) => user.followee_id
+      );
+      const canvases = await getCanvases({ user_id: followee_ids });
 
       setHomeFeedCanvases(canvases.data);
       setIsLoading(false);
@@ -34,9 +42,7 @@ const HomeFeedScreen: FC<Props> = (props) => {
     const unsubscribe = navigation.addListener("focus", () => {
       setIsLoading(true);
 
-      if (currentUser._id) {
-        getHomeFeedCanvases();
-      }
+      getHomeFeedCanvases();
     });
 
     return unsubscribe;
@@ -52,7 +58,7 @@ const HomeFeedScreen: FC<Props> = (props) => {
 
   return (
     <ScrollView style={homeFeedStyles.container}>
-      {homeFeedCanvases.length > 0 ? (
+      {homeFeedCanvases && homeFeedCanvases.length > 0 ? (
         homeFeedCanvases.map((canvas, index: number) => {
           return <CanvasSnapshot canvas={canvas} key={index} {...props} />;
         })
