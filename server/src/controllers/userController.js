@@ -1,5 +1,6 @@
 const httpStatus = require("http-status");
 const User = require("../models/userModel");
+const { ROLES } = require("../utils/global");
 
 exports.list = async (req, res, next) => {
   try {
@@ -49,8 +50,8 @@ exports.create = async (req, res, next) => {
 exports.update = async (req, res, next) => {
   try {
     const { _id } = req.params;
-    const user = req.body;
-    const savedUser = await User.updateOne({ _id }, user);
+    const userData = req.body;
+    const savedUser = await User.updateOne({ _id }, { $set: { userData } });
 
     res.json({ status: httpStatus.CREATED, savedUser });
   } catch (err) {
@@ -70,5 +71,40 @@ exports.delete = async (req, res, next) => {
     });
   } catch (err) {
     next(err);
+  }
+};
+
+exports.updatePassword = async (req, res, next) => {
+  try {
+    const { _id, current_password, new_password } = req.body;
+
+    const user = await User.findOne({ _id });
+    if (user) {
+      if (await user.passwordMatches(current_password)) {
+        await User.updateOne(
+          { _id },
+          { $set: { password: new_password } }
+        ).updateOne();
+
+        return res.json({
+          status: httpStatus.OK,
+          message: "Password successfully updated.",
+        });
+      } else {
+        return res.status(403).json({
+          status: httpStatus.FORBIDDEN,
+          message: "The password you entered is incorrect.",
+        });
+      }
+    } else {
+      return res.status(404).json({
+        status: httpStatus.NOT_FOUND,
+        message: "User does not exist.",
+      });
+    }
+  } catch (err) {
+    return res.status(err.status).json({
+      message: err.message,
+    });
   }
 };

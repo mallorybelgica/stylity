@@ -79,6 +79,20 @@ userSchema.pre("save", function (next) {
   }
 });
 
+userSchema.pre("updateOne", function (next) {
+  const password = this.getUpdate().$set.password;
+  if (!password) {
+    return next();
+  }
+  try {
+    const salt = bcrypt.genSaltSync();
+    const hash = bcrypt.hashSync(password, salt);
+    this.getUpdate().$set.password = hash;
+    next();
+  } catch (error) {
+    return next(error);
+  }
+});
 userSchema.statics.list = async function (query) {
   try {
     const users = await this.find(query).exec();
