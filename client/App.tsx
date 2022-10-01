@@ -2,22 +2,21 @@ import React, { useState, useEffect } from "react";
 import { Provider } from "react-redux";
 
 import { NavigationContainer } from "@react-navigation/native";
-import { Animated, Platform } from "react-native";
+import { Animated } from "react-native";
 import { store } from "./src/store/store";
-import { getAuthUser, getToken, isAuthenticated } from "./src/services/auth";
+import { getAuthUser, getToken } from "./src/services/auth";
 import { navigationRef } from "./src/navigation/RouteNavigation";
 
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { globalStyles } from "./src/styles/global";
 import { useDispatch } from "react-redux";
-import { currentUser, get_current_user } from "./src/store/users/userSlice";
+import { get_current_user } from "./src/store/users/userSlice";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { PublicStackNavigator } from "./src/navigation/StackNavigator";
-import { getUser } from "./src/services/user";
 import BottomTabNavigator from "./src/navigation/BottomTabNavigation";
 import { useSelector } from "react-redux";
-import { auth, modal, user } from "./src/store/selectors";
-import { restore_token } from "./src/store/auth/authSlice";
+import { modal, user } from "./src/store/selectors";
+import { restore_token } from "./src/store/users/userSlice";
 import ActivityLoader from "./src/components/common/ActivityLoader";
 
 export default function AppWrapper() {
@@ -32,7 +31,7 @@ export default function AppWrapper() {
 
 function App() {
   const dispatch = useDispatch();
-  const { userToken } = useSelector(auth);
+  const { userToken } = useSelector(user);
   const { isOpen } = useSelector(modal);
   const [isLoading, setIsLoading] = useState(true);
   const fadeAnimation = new Animated.Value(0);
@@ -50,9 +49,9 @@ function App() {
         if (userToken && user) {
           dispatch(restore_token({ userToken }));
           dispatch(get_current_user(user));
-          setIsLoading(false);
         }
       }
+      setIsLoading(false);
     } catch (err) {
       console.log({ err });
     }

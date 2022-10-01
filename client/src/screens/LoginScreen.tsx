@@ -1,4 +1,4 @@
-import React, { FC, SetStateAction, useEffect, useState } from "react";
+import React, { FC, useState } from "react";
 import {
   Text,
   View,
@@ -14,9 +14,7 @@ import { useDispatch } from "react-redux";
 import StyledButton from "../components/common/StyledButton";
 import { colors } from "../styles/base";
 import { globalStyles } from "../styles/global";
-import { useSelector } from "react-redux";
-import { user } from "../store/selectors";
-import { sign_in } from "../store/auth/authSlice";
+import { sign_in } from "../store/users/userSlice";
 import StyledSnackbar from "../components/common/StyledSnackbar";
 
 interface Props {
@@ -32,11 +30,12 @@ const LoginScreen: FC<Props> = ({ navigation }) => {
 
   const handleLogin = async () => {
     const res: any = await login({ email, password });
+
     if (res.status === 401) {
       setErrorMessage(res.errorMessage);
       setShowError(true);
     } else {
-      dispatch(sign_in(res.AUTH));
+      dispatch(sign_in({ token: res.AUTH, authUser: res.USER }));
     }
     Keyboard.dismiss();
   };

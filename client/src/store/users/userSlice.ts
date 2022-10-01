@@ -4,8 +4,8 @@ import { RootState } from "../store";
 
 interface UserState {
   currentUser: UserType;
-  isLoading: boolean;
-  error?: string;
+  userToken: null;
+  isSignout: boolean;
 }
 
 const initialState: UserState = {
@@ -16,12 +16,9 @@ const initialState: UserState = {
     email: "",
     bio: "",
     profile_pic: "",
-    canvases: [],
-    following: [],
-    followers: [],
   },
-  isLoading: true,
-  error: "",
+  userToken: null,
+  isSignout: false,
 };
 
 export const userSlice = createSlice({
@@ -38,14 +35,33 @@ export const userSlice = createSlice({
     update_current_user: (state, action) => {
       state.currentUser = { ...state.currentUser, ...action.payload };
     },
-    logout_current_user: (state) => {
-      state.currentUser = initialState.currentUser;
-    },
     user_error: (state, action) => {
       return {
         ...state,
         isLoading: false,
         error: action.payload.error,
+      };
+    },
+    restore_token: (state, action) => {
+      return {
+        ...state,
+        userToken: action.payload,
+      };
+    },
+    sign_in: (state, action) => {
+      return {
+        ...state,
+        currentUser: action.payload.authUser,
+        isSignout: false,
+        userToken: action.payload.token,
+      };
+    },
+    sign_out: (state) => {
+      return {
+        ...state,
+        currentUser: initialState.currentUser,
+        isSignout: true,
+        userToken: null,
       };
     },
   },
@@ -54,8 +70,10 @@ export const userSlice = createSlice({
 export const {
   get_current_user,
   update_current_user,
-  logout_current_user,
   user_error,
+  restore_token,
+  sign_in,
+  sign_out,
 } = userSlice.actions;
 
 export const currentUser = (state: RootState) => state.user.currentUser;

@@ -15,7 +15,7 @@ interface Props {
 }
 
 const HomeFeedScreen: FC<Props> = (props) => {
-  const navigation = useNavigation<StackNavigationProp<RootStackParamsList>>();
+  const { navigation } = props;
   const { currentUser } = useSelector(user);
   const [homeFeedCanvases, setHomeFeedCanvases] = useState([]);
   const [isLoading, setIsLoading] = useState(true);

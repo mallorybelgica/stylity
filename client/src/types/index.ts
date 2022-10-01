@@ -56,9 +56,6 @@ export type UserType = {
   bio?: string;
   email: string;
   profile_pic: string;
-  canvases?: Array<string>;
-  following: Array<string>;
-  followers: Array<string>;
 };
 
 export type FollowerType = {
@@ -77,6 +74,7 @@ export type RootStackParamsList = {
   Comments: { pid: string };
   UserList: { userList: Array<string>; name: string };
   Settings: undefined;
+  Explore: undefined;
   Login: undefined;
   Signup: undefined;
   NavigationBottom: undefined;

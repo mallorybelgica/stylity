@@ -6,7 +6,7 @@ import { useDispatch } from "react-redux";
 import StyledButton from "../components/common/StyledButton";
 import StyledTextInput from "../components/common/StyledTextInput";
 import { register } from "../services/auth";
-import { sign_in } from "../store/auth/authSlice";
+import { sign_in } from "../store/users/userSlice";
 import { colors } from "../styles/base";
 import { globalStyles } from "../styles/global";
 
@@ -30,7 +30,7 @@ const SignupScreen: FC<Props> = ({ navigation }) => {
     });
 
     if (res) {
-      dispatch(sign_in(res.AUTH));
+      dispatch(sign_in({ token: res.AUTH, authUser: res.USER }));
     }
   };
 

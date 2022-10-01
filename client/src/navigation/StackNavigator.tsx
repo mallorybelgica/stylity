@@ -21,11 +21,13 @@ import { useNavigation } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 import { user } from "../store/selectors";
 import UserListScreen from "../screens/UsersListScreen";
-import { currentUser } from "../store/users/userSlice";
+import ExploreScreen from "../screens/ExploreScreen";
 
 const Stack = createStackNavigator<RootStackParamsList>();
 
 const ProfileStackNavigator = () => {
+  const navigation = useNavigation<StackNavigationProp<RootStackParamsList>>();
+  const currentScreen = navigationRef.current?.getCurrentRoute()?.name;
   const { currentUser } = useSelector(user);
   return (
     <Stack.Navigator screenOptions={{ cardStyle: { backgroundColor: "#fff" } }}>
@@ -37,6 +39,18 @@ const ProfileStackNavigator = () => {
           headerTintColor: colors.whiteText,
           headerTitleAlign: "center",
           title: route.params ? route.params.name : currentUser.display_name,
+          headerRight: () => (
+            <TouchableOpacity
+              onPress={() => navigation.navigate("Settings")}
+              style={navStyles.icon}
+            >
+              <MaterialCommunityIcons
+                name={currentScreen === "Settings" ? "cog" : "cog-outline"}
+                color={colors.whiteText}
+                size={26}
+              />
+            </TouchableOpacity>
+          ),
         })}
         name="Profile"
         component={ProfileScreen}
@@ -80,11 +94,25 @@ const ProfileStackNavigator = () => {
         name="Comments"
         component={CommentsScreen}
       />
+      <Stack.Screen
+        options={{
+          headerStyle: {
+            backgroundColor: colors.accent,
+          },
+          headerTintColor: colors.whiteText,
+          headerTitleAlign: "center",
+        }}
+        name="Settings"
+      >
+        {(props) => <UserSettingsScreen />}
+      </Stack.Screen>
     </Stack.Navigator>
   );
 };
 
 const CanvasStackNavigator = () => {
+  const navigation = useNavigation<StackNavigationProp<RootStackParamsList>>();
+  const currentScreen = navigationRef.current?.getCurrentRoute()?.name;
   const { currentUser } = useSelector(user);
 
   return (
@@ -112,6 +140,18 @@ const CanvasStackNavigator = () => {
           headerTintColor: colors.whiteText,
           headerTitleAlign: "center",
           title: route.params ? route.params.name : currentUser.display_name,
+          headerRight: () => (
+            <TouchableOpacity
+              onPress={() => navigation.navigate("Settings")}
+              style={navStyles.icon}
+            >
+              <MaterialCommunityIcons
+                name={currentScreen === "Settings" ? "cog" : "cog-outline"}
+                color={colors.whiteText}
+                size={26}
+              />
+            </TouchableOpacity>
+          ),
         })}
         name="Profile"
         component={ProfileScreen}
@@ -139,6 +179,18 @@ const CanvasStackNavigator = () => {
         name="Canvas"
         component={CanvasDetailsScreen}
       />
+      <Stack.Screen
+        options={{
+          headerStyle: {
+            backgroundColor: colors.accent,
+          },
+          headerTintColor: colors.whiteText,
+          headerTitleAlign: "center",
+        }}
+        name="Settings"
+      >
+        {(props) => <UserSettingsScreen />}
+      </Stack.Screen>
     </Stack.Navigator>
   );
 };
@@ -162,11 +214,11 @@ const MainStackNavigator = () => {
           ),
           headerRight: () => (
             <TouchableOpacity
-              onPress={() => navigation.navigate("Settings")}
+              onPress={() => navigation.navigate("Explore")}
               style={navStyles.icon}
             >
               <MaterialCommunityIcons
-                name={currentScreen === "Settings" ? "cog" : "cog-outline"}
+                name={"magnify"}
                 color={colors.whiteText}
                 size={26}
               />
@@ -184,6 +236,18 @@ const MainStackNavigator = () => {
           headerTintColor: colors.whiteText,
           headerTitleAlign: "center",
           title: route.params.name,
+          headerRight: () => (
+            <TouchableOpacity
+              onPress={() => navigation.navigate("Settings")}
+              style={navStyles.icon}
+            >
+              <MaterialCommunityIcons
+                name={currentScreen === "Settings" ? "cog" : "cog-outline"}
+                color={colors.whiteText}
+                size={26}
+              />
+            </TouchableOpacity>
+          ),
         })}
         name="Profile"
         component={ProfileScreen}
@@ -226,6 +290,17 @@ const MainStackNavigator = () => {
         options={{ headerShown: false }}
         name="EditCanvas"
         component={EditCanvasScreen}
+      />
+      <Stack.Screen
+        options={{
+          headerStyle: {
+            backgroundColor: colors.accent,
+          },
+          headerTintColor: colors.whiteText,
+          headerTitleAlign: "center",
+        }}
+        name="Explore"
+        component={ExploreScreen}
       />
       <Stack.Screen
         options={{
