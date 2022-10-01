@@ -39,9 +39,18 @@ const canvasSchema = mongoose.Schema(
   { collection: "canvases" }
 );
 
-canvasSchema.statics.list = async function (query) {
+canvasSchema.statics.list = async function (
+  query,
+  page = 1,
+  limit = 50,
+  sort = { createdAt: -1 }
+) {
   try {
-    const canvases = await this.find(query).exec();
+    const canvases = await this.find(query)
+      .skip(limit * (page - 1))
+      .limit(limit)
+      .sort(sort)
+      .exec();
 
     return canvases;
   } catch (err) {
