@@ -4542,6 +4542,14 @@ expo-asset@~8.6.1:
     path-browserify "^1.0.0"
     url-parse "^1.5.9"
 
+expo-barcode-scanner@^11.4.0:
+  version "11.4.0"
+  resolved "https://registry.yarnpkg.com/expo-barcode-scanner/-/expo-barcode-scanner-11.4.0.tgz#d36f1cf76a7b1e48384681560a419e85d8018804"
+  integrity sha512-Q4BreQHY5U1aGF+rfqeGSzcdlayTKnSe/qTIfkXTmXFsL7bu3hMqdh5J/DL00Dfmc7C0IR8EiV75rqRrY4t0nA==
+  dependencies:
+    "@expo/config-plugins" "~5.0.0"
+    expo-image-loader "~3.2.0"
+
 expo-constants@~13.2.2, expo-constants@~13.2.4:
   version "13.2.4"
   resolved "https://registry.npmjs.org/expo-constants/-/expo-constants-13.2.4.tgz"
