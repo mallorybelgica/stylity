@@ -93,9 +93,25 @@ userSchema.pre("updateOne", function (next) {
     return next(error);
   }
 });
+
 userSchema.statics.list = async function (query) {
   try {
     const users = await this.find(query).exec();
+
+    return users;
+  } catch (err) {
+    throw error({ err });
+  }
+};
+
+userSchema.statics.search = async function (searchValue) {
+  try {
+    const users = await this.find({
+      $or: [
+        { display_name: { $regex: searchValue, $options: "i" } },
+        { full_name: { $regex: searchValue, $options: "i" } },
+      ],
+    }).exec();
 
     return users;
   } catch (err) {

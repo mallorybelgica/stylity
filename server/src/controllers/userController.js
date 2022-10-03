@@ -16,6 +16,22 @@ exports.list = async (req, res, next) => {
   }
 };
 
+exports.search = async (req, res, next) => {
+  try {
+    const { searchValue } = req.query;
+
+    const usersList = await User.search(searchValue);
+
+    const transformedUsersList = usersList.map((user) => {
+      return user.transform();
+    });
+
+    res.json({ status: httpStatus.OK, data: transformedUsersList });
+  } catch (err) {
+    next(err);
+  }
+};
+
 exports.get = async (req, res, next) => {
   try {
     const { _id } = req.params;
