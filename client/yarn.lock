@@ -4633,6 +4633,14 @@ expo-modules-core@0.11.4:
     compare-versions "^3.4.0"
     invariant "^2.2.4"
 
+expo-modules-core@^0.11.6:
+  version "0.11.6"
+  resolved "https://registry.yarnpkg.com/expo-modules-core/-/expo-modules-core-0.11.6.tgz#0fb166ce6c18def4bfef7a617d4ba8b20cd87d9f"
+  integrity sha512-Z3DSfyLCag5JxMas+rdPbb8PzhN0F7v0GGx2VuaiC3QvIITrybdRS5lJaXlsfqrJZ36j80p3ZKzfMjMX/RF9kA==
+  dependencies:
+    compare-versions "^3.4.0"
+    invariant "^2.2.4"
+
 expo-pwa@0.0.123:
   version "0.0.123"
   resolved "https://registry.npmjs.org/expo-pwa/-/expo-pwa-0.0.123.tgz"
