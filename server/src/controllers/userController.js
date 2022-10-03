@@ -67,7 +67,7 @@ exports.update = async (req, res, next) => {
   try {
     const { _id } = req.params;
     const userData = req.body;
-    const savedUser = await User.updateOne({ _id }, { $set: { userData } });
+    const savedUser = await User.updateOne({ _id }, { $set: userData });
 
     res.json({ status: httpStatus.CREATED, savedUser });
   } catch (err) {
