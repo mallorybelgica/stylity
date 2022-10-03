@@ -102,3 +102,24 @@ export const updateUserPassword = async (id: string, data: object) => {
     };
   }
 };
+
+export const getUserSearchResults = async (filters: object) => {
+  try {
+    const query = queryString.stringify(filters);
+
+    const authenticated = await isAuthenticated();
+    const token = await getToken();
+
+    if (authenticated) {
+      const res = await axios.get(`${USER_URL}/search?${query}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      return res.data;
+    }
+  } catch (err) {
+    return err;
+  }
+};

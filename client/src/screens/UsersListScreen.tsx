@@ -1,7 +1,7 @@
 import { RouteProp } from "@react-navigation/native";
 import { FC } from "react";
 import { ScrollView } from "react-native";
-import User from "../components/User";
+import User from "../components/user/User";
 import { RootStackParamsList } from "../types";
 
 interface Props {

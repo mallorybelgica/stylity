@@ -29,9 +29,13 @@ const HomeFeedScreen: FC<Props> = (props) => {
       const followee_ids = followingList.data.map(
         (user: any) => user.followee_id
       );
-      const canvases = await getCanvases({ user_id: followee_ids });
 
-      setHomeFeedCanvases(canvases.data);
+      if (followee_ids.length < 1) {
+        setHomeFeedCanvases([]);
+      } else {
+        const canvases = await getCanvases({ user_id: followee_ids });
+        setHomeFeedCanvases(canvases.data);
+      }
       setIsLoading(false);
     } catch (err) {
       console.log({ err });

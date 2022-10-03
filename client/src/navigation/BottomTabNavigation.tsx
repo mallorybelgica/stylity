@@ -6,6 +6,7 @@ import { colors } from "../styles/base";
 
 import {
   CanvasStackNavigator,
+  ExploreStackNavigator,
   MainStackNavigator,
   ProfileStackNavigator,
 } from "./StackNavigator";
@@ -77,6 +78,17 @@ const BottomTabNavigator = () => {
         }}
         name="Profile"
         component={ProfileStackNavigator}
+      />
+      <Tab.Screen
+        name={"SearchAndExplore"}
+        component={ExploreStackNavigator}
+        options={{
+          headerShown: false,
+          tabBarShowLabel: false,
+          tabBarActiveTintColor: "#000",
+          tabBarInactiveTintColor: "#000",
+          tabBarButton: () => null,
+        }}
       />
     </Tab.Navigator>
   );

@@ -75,6 +75,8 @@ export type RootStackParamsList = {
   UserList: { userList: Array<string>; name: string };
   Settings: undefined;
   Explore: undefined;
+  Search: undefined;
+  SearchAndExplore: undefined;
   Login: undefined;
   Signup: undefined;
   NavigationBottom: undefined;
