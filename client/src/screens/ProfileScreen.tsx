@@ -68,10 +68,6 @@ const ProfileScreen: FC<Props> = (props) => {
     setIsLoading(false);
   };
 
-  const reload = useCallback(() => {
-    setReloadKey((prevReloadKey) => prevReloadKey + 1);
-  }, []);
-
   const handleFollow = async () => {
     if (profileUser) {
       if (
@@ -102,9 +98,23 @@ const ProfileScreen: FC<Props> = (props) => {
     reload();
   };
 
+  const reload = useCallback(() => {
+    setReloadKey((prevReloadKey) => prevReloadKey + 1);
+  }, []);
+
   useEffect(() => {
     getProfileData();
   }, [profileUserId, reloadKey]);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", () => {
+      setIsLoading(true);
+
+      getProfileData();
+    });
+
+    return unsubscribe;
+  }, []);
 
   if (isLoading) {
     return <ActivityLoader />;
