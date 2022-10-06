@@ -7,7 +7,7 @@
       "developmentClient": true,
       "distribution": "internal"
     },
-    "stylity": {
+    "preview": {
       "distribution": "internal",
       "ios": {
         "simulator": true

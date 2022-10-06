@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Provider } from "react-redux";
-
+import { NODE_ENV } from "@env";
 import { NavigationContainer } from "@react-navigation/native";
 import { Animated } from "react-native";
 import { store } from "./src/store/store";
@@ -37,14 +37,20 @@ function App() {
   const fadeAnimation = new Animated.Value(0);
 
   const handleAuthentication = async () => {
-    let userToken: string | null;
+    let userToken: string;
     let user: any;
     try {
       const res: any = await getAuthUser();
 
       if (res) {
         user = JSON.parse(res);
-        userToken = await getToken();
+        const userTokenRes = await getToken();
+
+        if (userTokenRes === null) {
+          userToken = "";
+        } else {
+          userToken = userTokenRes;
+        }
 
         if (userToken && user) {
           dispatch(restore_token({ userToken }));

@@ -7,12 +7,27 @@ const AUTH_URL = "v1/auth";
 
 let AUTH: string, USER: object;
 
-export const getToken = () => {
-  return AsyncStorage.getItem("@stylity_token");
+export const getToken = async () => {
+  let token = "";
+
+  const res = await AsyncStorage.getItem("@stylity_token");
+
+  if (res) {
+    token = res;
+  }
+  return token;
 };
 
-export const getAuthUser = () => {
-  return AsyncStorage.getItem("@stylity_user");
+export const getAuthUser = async () => {
+  let authUser = "";
+
+  const res = await AsyncStorage.getItem("@stylity_user");
+
+  if (res) {
+    authUser = res;
+  }
+
+  return authUser;
 };
 
 export const register = async (data: object) => {
