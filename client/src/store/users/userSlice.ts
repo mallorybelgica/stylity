@@ -4,7 +4,7 @@ import { RootState } from "../store";
 
 interface UserState {
   currentUser: UserType;
-  userToken: null;
+  userToken: string | null;
   isSignout: boolean;
 }
 
@@ -75,7 +75,5 @@ export const {
   sign_in,
   sign_out,
 } = userSlice.actions;
-
-export const currentUser = (state: RootState) => state.user.currentUser;
 
 export default userSlice.reducer;

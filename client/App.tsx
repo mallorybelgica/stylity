@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Provider } from "react-redux";
-import { NODE_ENV } from "@env";
 import { NavigationContainer } from "@react-navigation/native";
 import { Animated } from "react-native";
 import { store } from "./src/store/store";
@@ -31,32 +30,24 @@ export default function AppWrapper() {
 
 function App() {
   const dispatch = useDispatch();
-  const { userToken } = useSelector(user);
+  const { userToken, currentUser } = useSelector(user);
   const { isOpen } = useSelector(modal);
   const [isLoading, setIsLoading] = useState(true);
   const fadeAnimation = new Animated.Value(0);
 
   const handleAuthentication = async () => {
-    let userToken: string;
-    let user: any;
     try {
-      const res: any = await getAuthUser();
+      const user: any = await getAuthUser();
+      const token = await getToken();
 
-      if (res) {
-        user = JSON.parse(res);
-        const userTokenRes = await getToken();
-
-        if (userTokenRes === null) {
-          userToken = "";
-        } else {
-          userToken = userTokenRes;
-        }
-
-        if (userToken && user) {
-          dispatch(restore_token({ userToken }));
-          dispatch(get_current_user(user));
-        }
+      if (token) {
+        dispatch(restore_token(userToken));
       }
+
+      if (user) {
+        dispatch(get_current_user(JSON.parse(user)));
+      }
+
       setIsLoading(false);
     } catch (err) {
       console.log({ err });

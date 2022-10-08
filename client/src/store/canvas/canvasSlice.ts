@@ -161,6 +161,4 @@ export const {
   canvas_error,
 } = canvasSlice.actions;
 
-export const canvasElements = (state: RootState) => state.canvas.elements;
-
 export default canvasSlice.reducer;
