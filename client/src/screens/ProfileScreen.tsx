@@ -69,30 +69,20 @@ const ProfileScreen: FC<Props> = (props) => {
   };
 
   const handleFollow = async () => {
-    if (profileUser) {
-      if (
-        followerList.some((follower) =>
-          follower.follower_id.includes(currentUser._id)
-        )
-      ) {
-        const followerItem: any = followerList.find(
-          (follower) => follower.follower_id === currentUser._id
-        );
-        deleteFollower(followerItem._id);
-      } else {
-        createFollower({
-          follower_id: currentUser._id,
-          followee_id: profileUserId,
-        });
-      }
-      followerList.map((follower) => {
-        if (follower.follower_id.includes(currentUser._id)) {
-        } else {
-          createFollower({
-            follower_id: currentUser._id,
-            followee_id: profileUserId,
-          });
-        }
+    if (
+      followerList.some((follower: FollowerType) =>
+        follower.follower_id.includes(currentUser._id)
+      )
+    ) {
+      const followerItem: any = followerList.find(
+        (follower) => follower.follower_id === currentUser._id
+      );
+      console.log({ followerItem });
+      deleteFollower(followerItem._id);
+    } else {
+      createFollower({
+        follower_id: currentUser._id,
+        followee_id: profileUserId,
       });
     }
     reload();
