@@ -137,6 +137,7 @@ export const canvasSlice = createSlice({
         ...action.payload,
       };
     },
+    reset_canvas: () => initialState,
     canvas_error: (state, action) => {
       return {
         ...state,
@@ -158,6 +159,7 @@ export const {
   send_element_back,
   send_element_front,
   update_canvas,
+  reset_canvas,
   canvas_error,
 } = canvasSlice.actions;
 

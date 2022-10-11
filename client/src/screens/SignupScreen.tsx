@@ -1,7 +1,14 @@
 import { ParamListBase } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import React, { FC, useState } from "react";
-import { Text, StyleSheet, View, TouchableOpacity } from "react-native";
+import {
+  Text,
+  StyleSheet,
+  View,
+  TouchableOpacity,
+  ActivityIndicator,
+  Keyboard,
+} from "react-native";
 import { useDispatch } from "react-redux";
 import StyledButton from "../components/common/StyledButton";
 import StyledTextInput from "../components/common/StyledTextInput";
@@ -20,6 +27,7 @@ const SignupScreen: FC<Props> = ({ navigation }) => {
   const [password, setPassword] = useState("");
   const [displayName, setDisplayName] = useState("");
   const [fullName, setFullName] = useState("");
+  const [isSuccess, setIsSuccess] = useState(false);
 
   const handleSignup = async () => {
     const res: any = await register({
@@ -30,8 +38,11 @@ const SignupScreen: FC<Props> = ({ navigation }) => {
     });
 
     if (res) {
+      setIsSuccess(true);
       dispatch(sign_in({ token: res.AUTH, authUser: res.USER }));
     }
+
+    Keyboard.dismiss();
   };
 
   return (
@@ -64,7 +75,13 @@ const SignupScreen: FC<Props> = ({ navigation }) => {
         value={fullName}
       />
       <StyledButton
-        title="Create Account"
+        title={
+          isSuccess ? (
+            <ActivityIndicator color="#fff" size="small" />
+          ) : (
+            "Create Account"
+          )
+        }
         bgColor={colors.accent}
         titleColor={colors.whiteText}
         customButtonStyles={{

@@ -5,6 +5,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   Keyboard,
+  ActivityIndicator,
 } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import StyledTextInput from "../components/common/StyledTextInput";
@@ -27,6 +28,7 @@ const LoginScreen: FC<Props> = ({ navigation }) => {
   const [password, setPassword] = useState<string>("");
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [isSuccess, setIsSuccess] = useState(false);
 
   const handleLogin = async () => {
     const res: any = await login({ email, password });
@@ -35,6 +37,7 @@ const LoginScreen: FC<Props> = ({ navigation }) => {
       setErrorMessage(res.errorMessage);
       setShowError(true);
     } else {
+      setIsSuccess(true);
       dispatch(sign_in({ token: res.AUTH, authUser: res.USER }));
     }
     Keyboard.dismiss();
@@ -60,7 +63,13 @@ const LoginScreen: FC<Props> = ({ navigation }) => {
           textContentType={"newPassword"}
         />
         <StyledButton
-          title="Login"
+          title={
+            isSuccess ? (
+              <ActivityIndicator color="#fff" size="small" />
+            ) : (
+              "Login"
+            )
+          }
           bgColor={colors.accent}
           titleColor={colors.whiteText}
           customButtonStyles={{

@@ -9,7 +9,11 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 import { CanvasElementType, RootStackParamsList } from "../types";
 import { globalStyles } from "../styles/global";
 import { canvas, user } from "../store/selectors";
-import { add_element, update_canvas } from "../store/canvas/canvasSlice";
+import {
+  add_element,
+  reset_canvas,
+  update_canvas,
+} from "../store/canvas/canvasSlice";
 import { imageUploader } from "../helpers/utils";
 import { createCanvas, getCanvas, updateCanvas } from "../services/canvas";
 import { uploadImage } from "../services/assets";
@@ -63,7 +67,7 @@ const EditCanvasScreen: FC<Props> = (props) => {
       const user_id = currentUser._id;
 
       if (canvasId) {
-        updateCanvas(canvasId, {
+        await updateCanvas(canvasId, {
           user_id,
           elements,
           screenshot,
@@ -71,13 +75,14 @@ const EditCanvasScreen: FC<Props> = (props) => {
           background_color,
         });
       } else {
-        createCanvas({
+        await createCanvas({
           user_id,
           elements,
           screenshot,
           caption,
           background_color,
         });
+        dispatch(reset_canvas());
       }
 
       setShowSnackbar(true);
@@ -149,7 +154,10 @@ const EditCanvasScreen: FC<Props> = (props) => {
           {
             text: "Discard",
             style: "destructive",
-            onPress: () => navigation.dispatch(ev.data.action),
+            onPress: () => {
+              dispatch(reset_canvas());
+              navigation.dispatch(ev.data.action);
+            },
           },
         ]
       );

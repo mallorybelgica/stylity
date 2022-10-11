@@ -126,7 +126,10 @@ const UserSettingsScreen = () => {
                 name="account-circle"
                 color={"black"}
                 size={70}
-                style={[globalStyles.profilePic, { alignSelf: "center" }]}
+                style={[
+                  globalStyles.profilePic,
+                  { alignSelf: "center", width: 70, height: 70 },
+                ]}
               />
             )}
           </TouchableOpacity>

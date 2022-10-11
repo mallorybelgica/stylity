@@ -1,12 +1,12 @@
 import React, { FC } from "react";
-import { Text, TouchableOpacity } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { colors } from "../../styles/base";
 import { globalStyles } from "../../styles/global";
 
 interface Props {
   icon?: string;
-  title: string;
+  title: string | JSX.Element;
   bgColor?: string;
   titleColor?: string;
   customButtonStyles?: object;
@@ -43,15 +43,19 @@ const StyledButton: FC<Props> = ({
           color={titleColor ? titleColor : colors.primaryText}
         />
       )}
-      <Text
-        style={[
-          globalStyles.listButtonText,
-          customTitleStyles ? customTitleStyles : {},
-          { color: titleColor ? titleColor : colors.primaryText },
-        ]}
-      >
-        {title}
-      </Text>
+      {typeof title === "string" ? (
+        <Text
+          style={[
+            globalStyles.listButtonText,
+            customTitleStyles ? customTitleStyles : {},
+            { color: titleColor ? titleColor : colors.primaryText },
+          ]}
+        >
+          {title}
+        </Text>
+      ) : (
+        <View>{title}</View>
+      )}
     </TouchableOpacity>
   );
 };
